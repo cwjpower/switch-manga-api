@@ -1,0 +1,211 @@
+### ========================================
+### 담벼락(Wall) API 테스트
+### Base URL: http://localhost:8080
+### ========================================
+
+### 변수 설정
+@baseUrl = http://localhost:8080/api/v1/wall
+@userId = 1
+@userId2 = 2
+@seriesId = 1
+@volumeId = 1
+
+### ========================================
+### 게시글 API 테스트
+### ========================================
+
+### 1. 시리즈 담벼락에 게시글 작성
+POST {{baseUrl}}/posts?userId={{userId}}
+Content-Type: application/json
+
+{
+  "content": "원피스 정말 재밌어요! 루피의 모험이 기대됩니다 🔥",
+  "targetType": "SERIES",
+  "targetId": {{seriesId}}
+}
+
+### 2. 권 담벼락에 게시글 작성
+POST {{baseUrl}}/posts?userId={{userId2}}
+Content-Type: application/json
+
+{
+  "content": "원피스 1권 감동적이에요! 추천합니다 👍",
+  "targetType": "VOLUME",
+  "targetId": {{volumeId}}
+}
+
+### 3. 전체 게시글 조회
+GET {{baseUrl}}/posts
+
+### 4. 게시글 상세 조회 (ID: 1)
+GET {{baseUrl}}/posts/1
+
+### 5. 특정 시리즈의 게시글 조회
+GET {{baseUrl}}/posts/target/SERIES/{{seriesId}}
+
+### 6. 특정 권의 게시글 조회
+GET {{baseUrl}}/posts/target/VOLUME/{{volumeId}}
+
+### 7. 특정 사용자가 작성한 게시글 조회
+GET {{baseUrl}}/posts/user/{{userId}}
+
+### 8. 특정 시리즈의 게시글 개수 조회
+GET {{baseUrl}}/posts/count/SERIES/{{seriesId}}
+
+### 9. 게시글 수정 (ID: 1)
+PUT {{baseUrl}}/posts/1
+Content-Type: application/json
+
+{
+  "content": "수정된 내용입니다. 원피스는 역시 명작이에요! 🎉"
+}
+
+### 10. 게시글 삭제 (ID: 1) - 주의: 댓글과 좋아요도 함께 삭제됨
+# DELETE {{baseUrl}}/posts/1
+
+
+### ========================================
+### 댓글 API 테스트
+### ========================================
+
+### 11. 댓글 작성 (게시글 ID: 1)
+POST {{baseUrl}}/comments?wallPostId=1&userId={{userId2}}
+Content-Type: application/json
+
+{
+  "content": "저도 원피스 좋아해요! 😊"
+}
+
+### 12. 댓글 작성 2 (게시글 ID: 1)
+POST {{baseUrl}}/comments?wallPostId=1&userId={{userId}}
+Content-Type: application/json
+
+{
+  "content": "루피 짱! 🏴‍☠️"
+}
+
+### 13. 특정 게시글의 댓글 조회 (게시글 ID: 1)
+GET {{baseUrl}}/comments/post/1
+
+### 14. 특정 사용자의 댓글 조회
+GET {{baseUrl}}/comments/user/{{userId2}}
+
+### 15. 댓글 상세 조회 (ID: 1)
+GET {{baseUrl}}/comments/1
+
+### 16. 댓글 수정 (ID: 1)
+PUT {{baseUrl}}/comments/1
+Content-Type: application/json
+
+{
+  "content": "수정된 댓글입니다. 조로도 멋져요! ⚔️"
+}
+
+### 17. 댓글 삭제 (ID: 1) - 주의: 게시글의 댓글 수가 자동으로 감소됨
+# DELETE {{baseUrl}}/comments/1
+
+
+### ========================================
+### 좋아요 API 테스트
+### ========================================
+
+### 18. 좋아요 개수 조회 (게시글 ID: 1)
+GET {{baseUrl}}/likes/count/1
+
+### 19. 사용자가 좋아요 눌렀는지 확인 (게시글 ID: 1, 사용자 ID: 1)
+GET {{baseUrl}}/likes/check/1/{{userId}}
+
+### 20. 좋아요 추가 (게시글 ID: 1, 사용자 ID: 1)
+POST {{baseUrl}}/likes?wallPostId=1&userId={{userId}}
+
+### 21. 좋아요 추가 (게시글 ID: 1, 사용자 ID: 2)
+POST {{baseUrl}}/likes?wallPostId=1&userId={{userId2}}
+
+### 22. 좋아요 취소 (게시글 ID: 1, 사용자 ID: 1)
+# DELETE {{baseUrl}}/likes?wallPostId=1&userId={{userId}}
+
+### 23. 좋아요 토글 ⭐ (가장 편리!) - 있으면 취소, 없으면 추가
+POST {{baseUrl}}/likes/toggle?wallPostId=1&userId={{userId}}
+
+
+### ========================================
+### 통합 시나리오 테스트
+### ========================================
+
+### 시나리오: 사용자가 담벼락에 글을 쓰고, 다른 사용자가 댓글과 좋아요를 누르는 과정
+
+### Step 1: 사용자 1이 원피스 시리즈에 게시글 작성
+POST {{baseUrl}}/posts?userId={{userId}}
+Content-Type: application/json
+
+{
+  "content": "원피스 시리즈 최고! 🏴‍☠️",
+  "targetType": "SERIES",
+  "targetId": {{seriesId}}
+}
+
+### Step 2: 게시글 목록 확인
+GET {{baseUrl}}/posts/target/SERIES/{{seriesId}}
+
+### Step 3: 사용자 2가 댓글 작성
+POST {{baseUrl}}/comments?wallPostId=1&userId={{userId2}}
+Content-Type: application/json
+
+{
+  "content": "동감합니다! 저도 원피스 팬이에요 👍"
+}
+
+### Step 4: 사용자 2가 좋아요 추가
+POST {{baseUrl}}/likes/toggle?wallPostId=1&userId={{userId2}}
+
+### Step 5: 게시글 상세 조회 (좋아요 수, 댓글 수 확인)
+GET {{baseUrl}}/posts/1
+
+### Step 6: 댓글 목록 확인
+GET {{baseUrl}}/comments/post/1
+
+
+### ========================================
+### 에러 케이스 테스트
+### ========================================
+
+### 에러 1: 존재하지 않는 게시글 조회
+GET {{baseUrl}}/posts/9999
+
+### 에러 2: 존재하지 않는 사용자로 게시글 작성
+POST {{baseUrl}}/posts?userId=9999
+Content-Type: application/json
+
+{
+  "content": "테스트",
+  "targetType": "SERIES",
+  "targetId": 1
+}
+
+### 에러 3: 이미 좋아요를 누른 게시글에 다시 좋아요 추가 (토글 말고 add 사용)
+POST {{baseUrl}}/likes?wallPostId=1&userId={{userId}}
+
+### 에러 4: 좋아요를 누르지 않은 게시글에서 좋아요 취소
+DELETE {{baseUrl}}/likes?wallPostId=1&userId=3
+
+
+### ========================================
+### 성능 테스트 (대량 데이터)
+### ========================================
+
+### 게시글 여러 개 작성 (반복 실행)
+POST {{baseUrl}}/posts?userId={{userId}}
+Content-Type: application/json
+
+{
+  "content": "테스트 게시글입니다.",
+  "targetType": "SERIES",
+  "targetId": {{seriesId}}
+}
+
+
+### ========================================
+### 팁: 주석 처리된 DELETE는 # 제거하고 실행!
+### 팁: Ctrl+Enter 또는 ▶️ 버튼으로 실행
+### 팁: 응답 결과는 하단에 자동으로 표시됨
+### ========================================
