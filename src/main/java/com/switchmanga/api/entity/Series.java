@@ -52,7 +52,7 @@ public class Series {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publisher_id", nullable = false)
-    @JsonIgnoreProperties({"series"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Publisher publisher;
 
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
