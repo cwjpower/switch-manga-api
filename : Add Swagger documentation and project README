@@ -1,0 +1,40 @@
+[1mdiff --git a/build.gradle b/build.gradle[m
+[1mindex 1ba27b0..19aae57 100644[m
+[1m--- a/build.gradle[m
+[1m+++ b/build.gradle[m
+[36m@@ -29,6 +29,9 @@[m [mdependencies {[m
+    // implementation 'org.springframework.boot:spring-boot-starter-security'[m
+     implementation 'org.springframework.boot:spring-boot-starter-validation'[m
+     implementation 'org.springframework.boot:spring-boot-starter-web'[m
+[32m+[m[41m    [m
+[32m+[m[32m    // Swagger/OpenAPI Documentation[m
+[32m+[m[32m    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'[m
+     compileOnly 'org.projectlombok:lombok'[m
+     developmentOnly 'org.springframework.boot:spring-boot-devtools'[m
+     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'[m
+[1mdiff --git a/gradlew b/gradlew[m
+[1mold mode 100644[m
+[1mnew mode 100755[m
+[1mdiff --git a/src/main/resources/application.yml b/src/main/resources/application.yml[m
+[1mindex 7671926..e60bc92 100644[m
+[1m--- a/src/main/resources/application.yml[m
+[1m+++ b/src/main/resources/application.yml[m
+[36m@@ -31,7 +31,7 @@[m [mspring:[m
+     activate:[m
+       on-profile: local[m
+   datasource:[m
+[31m-    url: jdbc:mariadb://localhost:3306/switchmanga?useUnicode=true&characterEncoding=utf8mb4[m
+[32m+[m[32m    url: jdbc:mariadb://localhost:33060/switchmanga?useUnicode=true&characterEncoding=utf8mb4[m
+     username: switchmanga[m
+     password: 2025[m
+     driver-class-name: org.mariadb.jdbc.Driver[m
+[36m@@ -43,7 +43,7 @@[m [mspring:[m
+     activate:[m
+       on-profile: prod[m
+   datasource:[m
+[31m-    url: jdbc:mariadb://34.64.84.117:3306/switchmanga?useUnicode=true&characterEncoding=utf8mb4[m
+[32m+[m[32m    url: jdbc:mariadb://34.64.84.117:33060/switchmanga?useUnicode=true&characterEncoding=utf8mb4[m
+     username: switchmanga[m
+     password: 2025[m
+     driver-class-name: org.mariadb.jdbc.Driver[m
+\ No newline at end of file[m

@@ -31,7 +31,7 @@ spring:
     activate:
       on-profile: local
   datasource:
-    url: jdbc:mariadb://localhost:33060/switchmanga?useUnicode=true&characterEncoding=utf8mb4
+    url: jdbc:mariadb://localhost:3306/switchmanga?useUnicode=true&characterEncoding=utf8mb4
     username: switchmanga
     password: 2025
     driver-class-name: org.mariadb.jdbc.Driver
@@ -43,7 +43,7 @@ spring:
     activate:
       on-profile: prod
   datasource:
-    url: jdbc:mariadb://34.64.84.117:33060/switchmanga?useUnicode=true&characterEncoding=utf8mb4
+    url: jdbc:mariadb://34.64.84.117:3306/switchmanga?useUnicode=true&characterEncoding=utf8mb4
     username: switchmanga
     password: 2025
     driver-class-name: org.mariadb.jdbc.Driver

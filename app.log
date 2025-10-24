@@ -1,0 +1,68 @@
+nohup: ignoring input
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :resolveMainClassName UP-TO-DATE
+
+> Task :bootRun
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.6)
+
+2025-10-24T13:40:48.498Z  INFO 817082 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : Starting SwitchMangaApiApplication using Java 17.0.16 with PID 817082 (/home/cwjpower01/switch-manga-api/build/classes/java/main started by cwjpower01 in /home/cwjpower01/switch-manga-api)
+2025-10-24T13:40:48.503Z DEBUG 817082 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : Running with Spring Boot v3.5.6, Spring v6.2.11
+2025-10-24T13:40:48.506Z  INFO 817082 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : The following 1 profile is active: "local"
+2025-10-24T13:40:48.629Z  INFO 817082 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-10-24T13:40:48.630Z  INFO 817082 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-10-24T13:40:50.113Z  INFO 817082 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-10-24T13:40:50.233Z  INFO 817082 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 106 ms. Found 12 JPA repository interfaces.
+2025-10-24T13:40:51.019Z  INFO 817082 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-10-24T13:40:51.039Z  INFO 817082 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-10-24T13:40:51.040Z  INFO 817082 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-10-24T13:40:51.117Z  INFO 817082 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-10-24T13:40:51.118Z  INFO 817082 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2486 ms
+2025-10-24T13:40:51.342Z  INFO 817082 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-10-24T13:40:51.402Z  INFO 817082 --- [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.29.Final
+2025-10-24T13:40:51.444Z  INFO 817082 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-10-24T13:40:51.875Z  INFO 817082 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-10-24T13:40:51.919Z  INFO 817082 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-10-24T13:40:52.043Z  INFO 817082 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.mariadb.jdbc.Connection@1ebc3c7b
+2025-10-24T13:40:52.047Z  INFO 817082 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-10-24T13:40:52.091Z  WARN 817082 --- [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-10-24T13:40:52.122Z  INFO 817082 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 11.8.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-10-24T13:40:53.871Z  INFO 817082 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-10-24T13:40:53.955Z DEBUG 817082 --- [  restartedMain] org.hibernate.SQL                        : 
+    alter table if exists users 
+       modify column role enum ('ADMIN','PUBLISHER','USER') not null
+Hibernate: 
+    alter table if exists users 
+       modify column role enum ('ADMIN','PUBLISHER','USER') not null
+2025-10-24T13:40:53.987Z DEBUG 817082 --- [  restartedMain] org.hibernate.SQL                        : 
+    alter table if exists wall_posts 
+       modify column target_type enum ('SERIES','VOLUME') not null
+Hibernate: 
+    alter table if exists wall_posts 
+       modify column target_type enum ('SERIES','VOLUME') not null
+2025-10-24T13:40:54.138Z  INFO 817082 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-10-24T13:40:54.579Z  INFO 817082 --- [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-10-24T13:40:56.080Z  WARN 817082 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-10-24T13:40:56.756Z  INFO 817082 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-10-24T13:40:56.839Z  INFO 817082 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-10-24T13:40:56.855Z  INFO 817082 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : Started SwitchMangaApiApplication in 9.113 seconds (process running for 10.317)
+2025-10-24T13:41:14.192Z  INFO 817082 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-24T13:41:14.193Z  INFO 817082 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-10-24T13:41:14.196Z  INFO 817082 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2025-10-24T13:41:16.633Z  INFO 817082 --- [nio-8080-exec-3] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 2150 ms
