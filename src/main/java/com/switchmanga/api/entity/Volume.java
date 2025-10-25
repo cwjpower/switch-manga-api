@@ -61,6 +61,10 @@ public class Volume {
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean active = true;
 
+    // ⭐ 조회수 필드 추가
+    @Column(name = "view_count", columnDefinition = "BIGINT DEFAULT 0")
+    private Long viewCount = 0L;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
