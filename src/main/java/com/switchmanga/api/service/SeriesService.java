@@ -32,7 +32,8 @@ public class SeriesService {
     }
 
     public List<Series> getActiveSeries() {
-        return seriesRepository.findByActiveTrue();
+        // findByActiveTrue() → findByActive(true)로 수정
+        return seriesRepository.findByActive(true);
     }
 
     public List<Series> getSeriesByStatus(String status) {
@@ -40,11 +41,13 @@ public class SeriesService {
     }
 
     public List<Series> searchSeriesByTitle(String title) {
-        return seriesRepository.findByTitleContaining(title);
+        // findByTitleContaining() → findByTitleContainingIgnoreCase()로 수정
+        return seriesRepository.findByTitleContainingIgnoreCase(title);
     }
 
     public List<Series> searchSeriesByAuthor(String author) {
-        return seriesRepository.findByAuthorContaining(author);
+        // findByAuthorContaining() → findByAuthorContainingIgnoreCase()로 수정
+        return seriesRepository.findByAuthorContainingIgnoreCase(author);
     }
 
     @Transactional

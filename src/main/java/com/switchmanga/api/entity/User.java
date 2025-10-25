@@ -29,7 +29,7 @@ public class User {
     @Column(nullable = false, length = 255)
     private String password;
 
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String username;
 
     @Column(length = 20)
@@ -57,6 +57,11 @@ public class User {
 
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
+
+    // ⭐ Publisher 관계 추가
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "publisher_id")
+    private Publisher publisher;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

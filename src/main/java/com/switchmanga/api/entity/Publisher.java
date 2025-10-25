@@ -1,14 +1,13 @@
 package com.switchmanga.api.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "publishers")
@@ -16,6 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder  // ← 이거 추가!
 public class Publisher {
 
     @Id
@@ -59,4 +59,13 @@ public class Publisher {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    // 관계 추가
+    @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<User> users = new ArrayList<>();
+
+    @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Series> series = new ArrayList<>();
 }

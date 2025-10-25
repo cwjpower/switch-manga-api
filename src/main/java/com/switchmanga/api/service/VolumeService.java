@@ -31,7 +31,8 @@ public class VolumeService {
 
     // 시리즈별 Volume 조회
     public List<Volume> getVolumesBySeries(Long seriesId) {
-        return volumeRepository.findBySeriesId(seriesId);
+        // findBySeriesId() → findBySeriesIdOrderByVolumeNumberAsc()로 수정
+        return volumeRepository.findBySeriesIdOrderByVolumeNumberAsc(seriesId);
     }
 
     // 시리즈별 Volume 조회 (권수 순서대로)
@@ -48,17 +49,20 @@ public class VolumeService {
 
     // 활성화된 Volume만 조회
     public List<Volume> getActiveVolumes() {
-        return volumeRepository.findByActiveTrue();
+        // findByActiveTrue() → findByActive(true)로 수정
+        return volumeRepository.findByActive(true);
     }
 
     // 시리즈별 활성 Volume 조회
     public List<Volume> getActiveVolumesBySeries(Long seriesId) {
-        return volumeRepository.findBySeriesIdAndActiveTrue(seriesId);
+        // findBySeriesIdAndActiveTrue() → findBySeriesIdAndActiveOrderByVolumeNumberAsc()로 수정
+        return volumeRepository.findBySeriesIdAndActiveOrderByVolumeNumberAsc(seriesId, true);
     }
 
     // 제목으로 검색
     public List<Volume> searchVolumesByTitle(String title) {
-        return volumeRepository.findByTitleContaining(title);
+        // findByTitleContaining() → findByTitleContainingIgnoreCase()로 수정
+        return volumeRepository.findByTitleContainingIgnoreCase(title);
     }
 
     // ISBN으로 조회
