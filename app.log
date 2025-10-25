@@ -1,231 +1,150 @@
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :resolveMainClassName UP-TO-DATE
 
-> Task :compileJava
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtAuthenticationFilter.java:8: error: package org.springframework.security.authentication does not exist
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-                                                  ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtAuthenticationFilter.java:9: error: package org.springframework.security.core.authority does not exist
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-                                                  ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtAuthenticationFilter.java:10: error: package org.springframework.security.core.context does not exist
-import org.springframework.security.core.context.SecurityContextHolder;
-                                                ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtAuthenticationFilter.java:11: error: package org.springframework.security.web.authentication does not exist
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-                                                      ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtTokenProvider.java:4: error: package io.jsonwebtoken.security does not exist
-import io.jsonwebtoken.security.Keys;
-                               ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtTokenProvider.java:6: error: package org.springframework.security.core does not exist
-import org.springframework.security.core.Authentication;
-                                        ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtTokenProvider.java:7: error: package org.springframework.security.core does not exist
-import org.springframework.security.core.GrantedAuthority;
-                                        ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtTokenProvider.java:43: error: cannot find symbol
-    public String createToken(Authentication authentication) {
-                              ^
-  symbol:   class Authentication
-  location: class JwtTokenProvider
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtTokenProvider.java:3: error: package io.jsonwebtoken does not exist
-import io.jsonwebtoken.*;
-^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/controller/AuthController.java:13: error: package org.springframework.security.crypto.password does not exist
-import org.springframework.security.crypto.password.PasswordEncoder;
-                                                   ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/controller/AuthController.java:27: error: cannot find symbol
-    private final PasswordEncoder passwordEncoder;
-                  ^
-  symbol:   class PasswordEncoder
-  location: class AuthController
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/controller/AuthController.java:23: error: cannot find symbol
-@RequiredArgsConstructor
-^
-  symbol:   class PasswordEncoder
-  location: class AuthController
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:7: error: package org.springframework.security.authentication does not exist
-import org.springframework.security.authentication.AuthenticationManager;
-                                                  ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:8: error: package org.springframework.security.config.annotation.authentication.configuration does not exist
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-                                                                                  ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:9: error: package org.springframework.security.config.annotation.method.configuration does not exist
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-                                                                          ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:10: error: package org.springframework.security.config.annotation.web.builders does not exist
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-                                                                  ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:11: error: package org.springframework.security.config.annotation.web.configuration does not exist
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-                                                                       ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:12: error: package org.springframework.security.config.http does not exist
-import org.springframework.security.config.http.SessionCreationPolicy;
-                                               ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:13: error: package org.springframework.security.crypto.bcrypt does not exist
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-                                                 ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:14: error: package org.springframework.security.crypto.password does not exist
-import org.springframework.security.crypto.password.PasswordEncoder;
-                                                   ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:15: error: package org.springframework.security.web does not exist
-import org.springframework.security.web.SecurityFilterChain;
-                                       ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:16: error: package org.springframework.security.web.authentication does not exist
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-                                                      ^
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:19: error: cannot find symbol
-@EnableWebSecurity
- ^
-  symbol: class EnableWebSecurity
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:20: error: cannot find symbol
-@EnableMethodSecurity
- ^
-  symbol: class EnableMethodSecurity
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:27: error: cannot find symbol
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-                                           ^
-  symbol:   class HttpSecurity
-  location: class SecurityConfig
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:27: error: cannot find symbol
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-           ^
-  symbol:   class SecurityFilterChain
-  location: class SecurityConfig
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:49: error: cannot find symbol
-    public PasswordEncoder passwordEncoder() {
-           ^
-  symbol:   class PasswordEncoder
-  location: class SecurityConfig
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:54: error: cannot find symbol
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-                                                       ^
-  symbol:   class AuthenticationConfiguration
-  location: class SecurityConfig
-/home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:54: error: cannot find symbol
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-           ^
-  symbol:   class AuthenticationManager
-  location: class SecurityConfig
-29 errors
+> Task :bootRun
 
-> Task :compileJava FAILED
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
 
-[Incubating] Problems report is available at: file:///home/cwjpower01/switch-manga-api/build/reports/problems/problems-report.html
+ :: Spring Boot ::                (v3.5.6)
 
-FAILURE: Build failed with an exception.
-
-* What went wrong:
-Execution failed for task ':compileJava'.
-> Compilation failed; see the compiler output below.
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtTokenProvider.java:43: error: cannot find symbol
-      public String createToken(Authentication authentication) {
-                                ^
-    symbol:   class Authentication
-    location: class JwtTokenProvider
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/controller/AuthController.java:27: error: cannot find symbol
-      private final PasswordEncoder passwordEncoder;
-                    ^
-    symbol:   class PasswordEncoder
-    location: class AuthController
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/controller/AuthController.java:23: error: cannot find symbol
-  @RequiredArgsConstructor
-  ^
-    symbol:   class PasswordEncoder
-    location: class AuthController
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:27: error: cannot find symbol
-      public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-                                             ^
-    symbol:   class HttpSecurity
-    location: class SecurityConfig
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:27: error: cannot find symbol
-      public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-             ^
-    symbol:   class SecurityFilterChain
-    location: class SecurityConfig
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:49: error: cannot find symbol
-      public PasswordEncoder passwordEncoder() {
-             ^
-    symbol:   class PasswordEncoder
-    location: class SecurityConfig
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:54: error: cannot find symbol
-      public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-                                                         ^
-    symbol:   class AuthenticationConfiguration
-    location: class SecurityConfig
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:54: error: cannot find symbol
-      public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-             ^
-    symbol:   class AuthenticationManager
-    location: class SecurityConfig
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:19: error: cannot find symbol
-  @EnableWebSecurity
-   ^
-    symbol: class EnableWebSecurity
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:20: error: cannot find symbol
-  @EnableMethodSecurity
-   ^
-    symbol: class EnableMethodSecurity
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtAuthenticationFilter.java:8: error: package org.springframework.security.authentication does not exist
-  import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-                                                    ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtAuthenticationFilter.java:9: error: package org.springframework.security.core.authority does not exist
-  import org.springframework.security.core.authority.SimpleGrantedAuthority;
-                                                    ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtAuthenticationFilter.java:10: error: package org.springframework.security.core.context does not exist
-  import org.springframework.security.core.context.SecurityContextHolder;
-                                                  ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtAuthenticationFilter.java:11: error: package org.springframework.security.web.authentication does not exist
-  import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-                                                        ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtTokenProvider.java:4: error: package io.jsonwebtoken.security does not exist
-  import io.jsonwebtoken.security.Keys;
-                                 ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtTokenProvider.java:6: error: package org.springframework.security.core does not exist
-  import org.springframework.security.core.Authentication;
-                                          ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtTokenProvider.java:7: error: package org.springframework.security.core does not exist
-  import org.springframework.security.core.GrantedAuthority;
-                                          ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/security/JwtTokenProvider.java:3: error: package io.jsonwebtoken does not exist
-  import io.jsonwebtoken.*;
-  ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/controller/AuthController.java:13: error: package org.springframework.security.crypto.password does not exist
-  import org.springframework.security.crypto.password.PasswordEncoder;
-                                                     ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:7: error: package org.springframework.security.authentication does not exist
-  import org.springframework.security.authentication.AuthenticationManager;
-                                                    ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:8: error: package org.springframework.security.config.annotation.authentication.configuration does not exist
-  import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-                                                                                    ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:9: error: package org.springframework.security.config.annotation.method.configuration does not exist
-  import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-                                                                            ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:10: error: package org.springframework.security.config.annotation.web.builders does not exist
-  import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-                                                                    ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:11: error: package org.springframework.security.config.annotation.web.configuration does not exist
-  import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-                                                                         ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:12: error: package org.springframework.security.config.http does not exist
-  import org.springframework.security.config.http.SessionCreationPolicy;
-                                                 ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:13: error: package org.springframework.security.crypto.bcrypt does not exist
-  import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-                                                   ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:14: error: package org.springframework.security.crypto.password does not exist
-  import org.springframework.security.crypto.password.PasswordEncoder;
-                                                     ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:15: error: package org.springframework.security.web does not exist
-  import org.springframework.security.web.SecurityFilterChain;
-                                         ^
-  /home/cwjpower01/switch-manga-api/src/main/java/com/switchmanga/api/config/SecurityConfig.java:16: error: package org.springframework.security.web.authentication does not exist
-  import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-                                                        ^
-  29 errors
-
-* Try:
-> Check your code and dependencies to fix the compilation error(s)
-> Run with --scan to get full insights.
-
-BUILD FAILED in 5s
-1 actionable task: 1 executed
+2025-10-25T09:31:35.061Z  INFO 835485 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : Starting SwitchMangaApiApplication using Java 17.0.16 with PID 835485 (/home/cwjpower01/switch-manga-api/build/classes/java/main started by cwjpower01 in /home/cwjpower01/switch-manga-api)
+2025-10-25T09:31:35.066Z DEBUG 835485 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : Running with Spring Boot v3.5.6, Spring v6.2.11
+2025-10-25T09:31:35.069Z  INFO 835485 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : The following 1 profile is active: "local"
+2025-10-25T09:31:35.173Z  INFO 835485 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-10-25T09:31:35.174Z  INFO 835485 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-10-25T09:31:36.538Z  INFO 835485 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-10-25T09:31:36.642Z  INFO 835485 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 93 ms. Found 12 JPA repository interfaces.
+2025-10-25T09:31:37.446Z  INFO 835485 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-10-25T09:31:37.464Z  INFO 835485 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-10-25T09:31:37.464Z  INFO 835485 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-10-25T09:31:37.515Z  INFO 835485 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-10-25T09:31:37.517Z  INFO 835485 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2341 ms
+2025-10-25T09:31:37.604Z DEBUG 835485 --- [  restartedMain] c.s.a.security.JwtAuthenticationFilter   : Filter 'jwtAuthenticationFilter' configured for use
+2025-10-25T09:31:37.773Z  INFO 835485 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-10-25T09:31:37.822Z  INFO 835485 --- [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.29.Final
+2025-10-25T09:31:37.857Z  INFO 835485 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-10-25T09:31:38.184Z  INFO 835485 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-10-25T09:31:38.215Z  INFO 835485 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-10-25T09:31:38.313Z  INFO 835485 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.mariadb.jdbc.Connection@14f591a4
+2025-10-25T09:31:38.315Z  INFO 835485 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-10-25T09:31:38.350Z  WARN 835485 --- [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-10-25T09:31:38.373Z  INFO 835485 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 11.8.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-10-25T09:31:39.849Z  INFO 835485 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-10-25T09:31:39.924Z DEBUG 835485 --- [  restartedMain] org.hibernate.SQL                        : 
+    alter table if exists users 
+       modify column role enum ('ADMIN','PUBLISHER','USER') not null
+Hibernate: 
+    alter table if exists users 
+       modify column role enum ('ADMIN','PUBLISHER','USER') not null
+2025-10-25T09:31:39.947Z DEBUG 835485 --- [  restartedMain] org.hibernate.SQL                        : 
+    alter table if exists wall_posts 
+       modify column target_type enum ('SERIES','VOLUME') not null
+Hibernate: 
+    alter table if exists wall_posts 
+       modify column target_type enum ('SERIES','VOLUME') not null
+2025-10-25T09:31:40.149Z  INFO 835485 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-10-25T09:31:40.677Z  INFO 835485 --- [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-10-25T09:31:42.310Z  WARN 835485 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-10-25T09:31:43.411Z  INFO 835485 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-10-25T09:31:43.461Z  INFO 835485 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-10-25T09:31:43.480Z  INFO 835485 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : Started SwitchMangaApiApplication in 9.085 seconds (process running for 9.919)
+2025-10-25T09:31:51.336Z  INFO 835485 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-25T09:31:51.337Z  INFO 835485 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-10-25T09:31:51.339Z  INFO 835485 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-10-25T09:31:51.490Z  INFO 835485 --- [nio-8080-exec-1] c.s.api.controller.AuthController        : Login attempt for email: admin@switchmanga.com
+2025-10-25T09:31:51.573Z DEBUG 835485 --- [nio-8080-exec-1] org.hibernate.SQL                        : 
+    select
+        u1_0.id,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.gender,
+        u1_0.last_login_at,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.profile_image,
+        u1_0.role,
+        u1_0.status,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.email_verified,
+        u1_0.gender,
+        u1_0.last_login_at,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.profile_image,
+        u1_0.role,
+        u1_0.status,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-10-25T09:31:51.622Z  INFO 835485 --- [nio-8080-exec-1] c.s.api.controller.AuthController        : User found: admin@switchmanga.com
+2025-10-25T09:31:51.623Z  INFO 835485 --- [nio-8080-exec-1] c.s.api.controller.AuthController        : DB Password Hash (first 30 chars): $2a$10$vxIMs7SAm3MpUOWaJLoYW.u
+2025-10-25T09:31:51.624Z  INFO 835485 --- [nio-8080-exec-1] c.s.api.controller.AuthController        : Input Password: test1234
+2025-10-25T09:31:51.743Z  INFO 835485 --- [nio-8080-exec-1] c.s.api.controller.AuthController        : Password matches: true
+2025-10-25T09:31:51.944Z  INFO 835485 --- [nio-8080-exec-1] c.s.api.controller.AuthController        : Token generated for: admin@switchmanga.com
+2025-10-25T09:31:51.984Z DEBUG 835485 --- [nio-8080-exec-1] org.hibernate.SQL                        : 
+    update
+        users 
+    set
+        birth_date=?,
+        email=?,
+        email_verified=?,
+        gender=?,
+        last_login_at=?,
+        password=?,
+        phone=?,
+        profile_image=?,
+        role=?,
+        status=?,
+        updated_at=?,
+        username=? 
+    where
+        id=?
+Hibernate: 
+    update
+        users 
+    set
+        birth_date=?,
+        email=?,
+        email_verified=?,
+        gender=?,
+        last_login_at=?,
+        password=?,
+        phone=?,
+        profile_image=?,
+        role=?,
+        status=?,
+        updated_at=?,
+        username=? 
+    where
+        id=?
+2025-10-25T09:31:52.006Z  INFO 835485 --- [nio-8080-exec-1] c.s.api.controller.AuthController        : Login successful for: admin@switchmanga.com

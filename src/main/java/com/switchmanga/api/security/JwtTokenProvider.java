@@ -25,19 +25,18 @@ public class JwtTokenProvider {
         this.validityInMilliseconds = validityInMilliseconds;
     }
 
-    public String createToken(String email, String role) {
-        Claims claims = Jwts.claims().subject(email).build();
-        claims.put("role", role);
+public String createToken(String email, String role) {
+    Date now = new Date();
+    Date validity = new Date(now.getTime() + validityInMilliseconds);
 
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds);
+    return Jwts.builder()
+            .subject(email)
+            .claim("role", role)
+            .issuedAt(now)
+            .expiration(validity)
+            .signWith(secretKey, Jwts.SIG.HS256)
+            .compact();
 
-        return Jwts.builder()
-                .claims(claims)
-                .issuedAt(now)
-                .expiration(validity)
-                .signWith(secretKey, Jwts.SIG.HS256)
-                .compact();
     }
 
     public String createToken(Authentication authentication) {

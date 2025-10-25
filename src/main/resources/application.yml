@@ -4,7 +4,7 @@ server:
 spring:
   profiles:
     active: local
-
+  
   jpa:
     hibernate:
       ddl-auto: update
@@ -13,7 +13,7 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MariaDBDialect
-
+  
   servlet:
     multipart:
       max-file-size: 100MB
@@ -27,23 +27,14 @@ logging:
 ---
 # 개발 환경 (로컬)
 spring:
-  config:
-    activate:
-      on-profile: local
+
   datasource:
-    url: jdbc:mariadb://localhost:33060/switchmanga?useUnicode=true&characterEncoding=utf8mb4
+    url: jdbc:mariadb://localhost:33060/switchmanga
     username: switchmanga
-    password: 2025
+    password: switchmanga123
     driver-class-name: org.mariadb.jdbc.Driver
 
----
-# 운영 환경 (GCP)
-spring:
-  config:
-    activate:
-      on-profile: prod
-  datasource:
-    url: jdbc:mariadb://34.64.84.117:33060/switchmanga?useUnicode=true&characterEncoding=utf8mb4
-    username: switchmanga
-    password: 2025
-    driver-class-name: org.mariadb.jdbc.Driver
+# JWT 설정
+jwt:
+  secret: mySecretKeyForJWTTokenGenerationThatIsAtLeast256BitsLongForHS256Algorithm
+  expiration: 86400000
