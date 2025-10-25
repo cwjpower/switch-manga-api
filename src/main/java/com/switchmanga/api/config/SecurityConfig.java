@@ -30,14 +30,22 @@ public class SecurityConfig {
                 .sessionManagement(session -> 
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // ⭐ 인증 관련
                         .requestMatchers("/api/v1/auth/**").permitAll()
+                        
+                        // ⭐ Swagger UI
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
-                        .requestMatchers("/api/v1/publishers/**").permitAll()
-                        .requestMatchers("/api/v1/series/**").permitAll()
-                        .requestMatchers("/api/v1/volumes/**").permitAll()
+                        
+                        // ⭐ Public API - 정확한 경로와 하위 경로 모두 허용
+                        .requestMatchers("/api/v1/publishers", "/api/v1/publishers/**").permitAll()
+                        .requestMatchers("/api/v1/series", "/api/v1/series/**").permitAll()
+                        .requestMatchers("/api/v1/volumes", "/api/v1/volumes/**").permitAll()
+                        
+                        // ⭐ Admin/Publisher 전용
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/publisher/**").hasAnyRole("ADMIN", "PUBLISHER")
+                        
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
