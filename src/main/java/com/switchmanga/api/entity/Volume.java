@@ -61,9 +61,13 @@ public class Volume {
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean active = true;
 
-    // ⭐ 조회수 필드 추가
+    // ⭐ 조회수 필드
     @Column(name = "view_count", columnDefinition = "BIGINT DEFAULT 0")
     private Long viewCount = 0L;
+
+    // ⭐ 평균 평점 필드 (리뷰 기능용)
+    @Column(name = "average_rating", columnDefinition = "DECIMAL(3,2) DEFAULT 0.0")
+    private Double averageRating = 0.0;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
