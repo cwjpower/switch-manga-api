@@ -58,6 +58,22 @@ public class Series {
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean active = true;
 
+    // ⭐ 카테고리 ID (필요하면 추가, 아니면 Repository에서 삭제)
+    @Column(name = "category_id")
+    private Long categoryId;
+
+    // ⭐ 조회수
+    @Column(name = "view_count", columnDefinition = "BIGINT DEFAULT 0")
+    private Long viewCount = 0L;
+
+    // ⭐ 평균 평점
+    @Column(name = "average_rating", columnDefinition = "DECIMAL(3,2) DEFAULT 0.0")
+    private Double averageRating = 0.0;
+
+    // ⭐ 리뷰 개수
+    @Column(name = "review_count", columnDefinition = "INT DEFAULT 0")
+    private Integer reviewCount = 0;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
