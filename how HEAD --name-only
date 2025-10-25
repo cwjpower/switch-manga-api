@@ -1,0 +1,27 @@
+[33mcommit ecfab28ac37070512020a71d1177d75866c1904c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;32mmain-backup[m[33m)[m
+Author: cwjpower <cwjpower01@gmail.com>
+Date:   Sun Oct 26 01:06:19 2025 +0900
+
+    Fix: Repository 메서드 호출 오류 수정
+    
+    - PublisherService: country 업데이트 로직 제거
+    - SeriesRepository: findByActive 메서드 추가
+    - SeriesService: Repository 메서드명 수정
+    - VolumeService: Repository 메서드명 수정
+
+src/main/java/com/switchmanga/api/config/WebMvcConfig.java
+src/main/java/com/switchmanga/api/controller/PublisherPortalController.java
+src/main/java/com/switchmanga/api/dto/publisher/PublisherCreateRequest.java
+src/main/java/com/switchmanga/api/dto/publisher/PublisherInfoResponse.java
+src/main/java/com/switchmanga/api/dto/publisher/PublisherStatsResponse.java
+src/main/java/com/switchmanga/api/dto/publisher/PublisherUpdateRequest.java
+src/main/java/com/switchmanga/api/dto/series/SeriesCreateRequest.java
+src/main/java/com/switchmanga/api/dto/series/SeriesDetailResponse.java
+src/main/java/com/switchmanga/api/dto/series/SeriesListResponse.java
+src/main/java/com/switchmanga/api/dto/series/SeriesUpdateRequest.java
+src/main/java/com/switchmanga/api/dto/volume/VolumeCreateRequest.java
+src/main/java/com/switchmanga/api/dto/volume/VolumeDetailResponse.java
+src/main/java/com/switchmanga/api/dto/volume/VolumeListResponse.java
+src/main/java/com/switchmanga/api/dto/volume/VolumeUpdateRequest.java
+src/main/java/com/switchmanga/api/security/AuthUser.java
+src/main/java/com/switchmanga/api/security/AuthUserArgumentResolver.java
