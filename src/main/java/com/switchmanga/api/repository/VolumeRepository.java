@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -129,7 +130,8 @@ public interface VolumeRepository extends JpaRepository<Volume, Long> {
 
     /**
      * 특정 출판일 이후의 권 조회
+     * ⭐ publicationDate로 수정 (LocalDateTime 사용)
      */
-    @Query("SELECT v FROM Volume v WHERE v.publishDate >= :date AND v.active = true ORDER BY v.publishDate DESC")
-    List<Volume> findByPublishDateAfter(@Param("date") java.time.LocalDate date);
+    @Query("SELECT v FROM Volume v WHERE v.publicationDate >= :date AND v.active = true ORDER BY v.publicationDate DESC")
+    List<Volume> findByPublicationDateAfter(@Param("date") LocalDateTime date);
 }
