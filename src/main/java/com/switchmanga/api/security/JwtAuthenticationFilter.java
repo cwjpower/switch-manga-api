@@ -15,12 +15,30 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+
+    // ⭐ 필터를 건너뛸 경로 목록
+    private static final List<String> EXCLUDED_PATHS = List.of(
+            "/api/v1/auth/",
+            "/swagger-ui/",
+            "/v3/api-docs/",
+            "/api/v1/publishers",
+            "/api/v1/series",
+            "/api/v1/volumes"
+    );
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        // ⭐ EXCLUDED_PATHS에 포함된 경로면 필터 건너뛰기
+        return EXCLUDED_PATHS.stream().anyMatch(path::startsWith);
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
