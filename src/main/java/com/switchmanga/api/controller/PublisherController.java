@@ -16,10 +16,10 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 /**
- * Publisher Controller (ADMIN 전용)
- * 슈퍼 관리자가 모든 출판사를 관리하는 API
+ * Publisher Controller
+ * Public API + Admin API 분리
  */
-@Tag(name = "Publisher (Admin)", description = "출판사 관리 API (ADMIN 전용)")
+@Tag(name = "Publisher", description = "출판사 API")
 @RestController
 @RequestMapping("/api/v1/publishers")
 @RequiredArgsConstructor
@@ -27,26 +27,48 @@ public class PublisherController {
     
     private final PublisherService publisherService;
     
-    @Operation(summary = "모든 출판사 조회", description = "전체 출판사 목록을 조회합니다 (ADMIN 전용)")
+    // ========================================
+    // 🔓 PUBLIC API (인증 불필요)
+    // ========================================
+    
+    @Operation(summary = "[Public] 모든 출판사 조회", description = "전체 출판사 목록을 조회합니다")
     @GetMapping
+    public ResponseEntity<List<PublisherInfoResponse>> getAllPublishersPublic() {
+        List<PublisherInfoResponse> publishers = publisherService.getAllPublishersPublic();
+        return ResponseEntity.ok(publishers);
+    }
+    
+    @Operation(summary = "[Public] 출판사 상세 조회", description = "특정 출판사의 상세 정보를 조회합니다")
+    @GetMapping("/{id}")
+    public ResponseEntity<PublisherInfoResponse> getPublisherPublic(@PathVariable Long id) {
+        PublisherInfoResponse publisher = publisherService.getPublisherByIdPublic(id);
+        return ResponseEntity.ok(publisher);
+    }
+    
+    // ========================================
+    // 🔒 ADMIN API (ADMIN 권한 필요)
+    // ========================================
+    
+    @Operation(summary = "[Admin] 모든 출판사 조회", description = "전체 출판사 목록을 조회합니다 (ADMIN 전용)")
+    @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<PublisherInfoResponse>> getAllPublishers(@AuthUser User admin) {
+    public ResponseEntity<List<PublisherInfoResponse>> getAllPublishersAdmin(@AuthUser User admin) {
         List<PublisherInfoResponse> publishers = publisherService.getAllPublishers(admin);
         return ResponseEntity.ok(publishers);
     }
     
-    @Operation(summary = "출판사 상세 조회", description = "특정 출판사의 상세 정보를 조회합니다 (ADMIN 전용)")
-    @GetMapping("/{id}")
+    @Operation(summary = "[Admin] 출판사 상세 조회", description = "특정 출판사의 상세 정보를 조회합니다 (ADMIN 전용)")
+    @GetMapping("/admin/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PublisherInfoResponse> getPublisher(
+    public ResponseEntity<PublisherInfoResponse> getPublisherAdmin(
             @AuthUser User admin,
             @PathVariable Long id) {
         PublisherInfoResponse publisher = publisherService.getPublisherById(admin, id);
         return ResponseEntity.ok(publisher);
     }
     
-    @Operation(summary = "출판사 생성", description = "새로운 출판사를 등록합니다 (ADMIN 전용)")
-    @PostMapping
+    @Operation(summary = "[Admin] 출판사 생성", description = "새로운 출판사를 등록합니다 (ADMIN 전용)")
+    @PostMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PublisherInfoResponse> createPublisher(
             @AuthUser User admin,
@@ -55,8 +77,8 @@ public class PublisherController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
     
-    @Operation(summary = "출판사 정보 수정", description = "출판사 정보를 수정합니다 (ADMIN 전용)")
-    @PutMapping("/{id}")
+    @Operation(summary = "[Admin] 출판사 정보 수정", description = "출판사 정보를 수정합니다 (ADMIN 전용)")
+    @PutMapping("/admin/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PublisherInfoResponse> updatePublisher(
             @AuthUser User admin,
@@ -66,8 +88,8 @@ public class PublisherController {
         return ResponseEntity.ok(updated);
     }
     
-    @Operation(summary = "출판사 삭제", description = "출판사를 비활성화합니다 (Soft Delete, ADMIN 전용)")
-    @DeleteMapping("/{id}")
+    @Operation(summary = "[Admin] 출판사 삭제", description = "출판사를 비활성화합니다 (Soft Delete, ADMIN 전용)")
+    @DeleteMapping("/admin/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deletePublisher(
             @AuthUser User admin,

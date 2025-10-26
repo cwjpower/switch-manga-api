@@ -17,8 +17,9 @@ import java.util.stream.Collectors;
 
 /**
  * Publisher Service
- * - ADMIN용 메서드: PublisherController에서 사용
- * - PUBLISHER용 메서드: PublisherPortalController에서 사용
+ * - PUBLIC API: 인증 불필요
+ * - ADMIN API: PublisherController에서 사용
+ * - PUBLISHER API: PublisherPortalController에서 사용
  */
 @Service
 @RequiredArgsConstructor
@@ -31,11 +32,41 @@ public class PublisherService {
     private final OrderRepository orderRepository;
     
     // ========================================
-    // 🔹 ADMIN 전용 메서드 (PublisherController용)
+    // 🔓 PUBLIC API (인증 불필요)
+    // ========================================
+    
+    /**
+     * 모든 출판사 조회 (Public)
+     * 활성화된 출판사만 반환
+     */
+    public List<PublisherInfoResponse> getAllPublishersPublic() {
+        return publisherRepository.findAll().stream()
+                .filter(p -> Boolean.TRUE.equals(p.getActive()))  // 활성화된 출판사만
+                .map(PublisherInfoResponse::from)
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * 특정 출판사 조회 (Public)
+     * 활성화된 출판사만 조회 가능
+     */
+    public PublisherInfoResponse getPublisherByIdPublic(Long publisherId) {
+        Publisher publisher = findPublisherOrThrow(publisherId);
+        
+        if (!Boolean.TRUE.equals(publisher.getActive())) {
+            throw new RuntimeException("활성화되지 않은 출판사입니다: " + publisherId);
+        }
+        
+        return PublisherInfoResponse.from(publisher);
+    }
+    
+    // ========================================
+    // 🔒 ADMIN 전용 메서드 (PublisherController용)
     // ========================================
     
     /**
      * 모든 출판사 조회 (ADMIN 전용)
+     * 비활성화된 출판사 포함
      */
     public List<PublisherInfoResponse> getAllPublishers(User admin) {
         validateAdminRole(admin);
@@ -103,7 +134,7 @@ public class PublisherService {
     }
     
     // ========================================
-    // 🔹 PUBLISHER 전용 메서드 (PublisherPortalController용)
+    // 🔒 PUBLISHER 전용 메서드 (PublisherPortalController용)
     // ========================================
     
     /**
@@ -163,7 +194,7 @@ public class PublisherService {
                 .publisherName(publisher.getName())
                 .totalSeries(totalSeries != null ? totalSeries : 0L)
                 .totalVolumes(totalVolumes != null ? totalVolumes : 0L)
-                .totalOrders(totalOrders != null ? totalOrders : 0L)
+                .totalOrders(totalOrders)  // 항상 0L이므로 조건 불필요
                 .build();
     }
     
