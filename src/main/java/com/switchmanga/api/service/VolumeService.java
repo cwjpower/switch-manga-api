@@ -9,7 +9,8 @@ import com.switchmanga.api.repository.VolumeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.switchmanga.api.repository.PublisherRepository;
+import com.switchmanga.api.repository.SeriesRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 

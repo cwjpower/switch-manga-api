@@ -31,7 +31,7 @@ public class SeriesUpdateRequest {
     private String artist;
     
     @Size(max = 50, message = "상태는 50자 이내로 입력해주세요")
-    private String status;              // ONGOING, COMPLETED, HIATUS
+    private String status;
     
     @Size(max = 255, message = "이미지 URL은 255자 이내로 입력해주세요")
     private String coverImage;

@@ -27,7 +27,7 @@ public class SeriesDetailResponse {
     private Long publisherId;
     private String publisherName;
     
-    private String status;              // ONGOING, COMPLETED, HIATUS
+    private String status;
     private String coverImage;
     private LocalDateTime releaseDate;
     

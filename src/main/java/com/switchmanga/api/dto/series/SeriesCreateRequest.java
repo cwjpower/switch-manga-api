@@ -1,39 +1,41 @@
-// src/main/java/com/switchmanga/api/dto/series/SeriesCreateRequest.java
-
 package com.switchmanga.api.dto.series;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * Series 생성 요청 DTO
+ * 시리즈 생성 요청 DTO
  * POST /api/v1/publishers/me/series
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class SeriesCreateRequest {
-    
-    @NotBlank(message = "Title is required")
-    @Size(max = 200, message = "Title must be less than 200 characters")
+
+    @NotBlank(message = "제목은 필수입니다")
+    @Size(max = 255, message = "제목은 255자 이내로 입력해주세요")
     private String title;
     
-    @NotBlank(message = "Author is required")
-    @Size(max = 100, message = "Author must be less than 100 characters")
-    private String author;
+    @Size(max = 255, message = "영문 제목은 255자 이내로 입력해주세요")
+    private String titleEn;
     
-    @Size(max = 50, message = "Category must be less than 50 characters")
-    private String category;
+    @Size(max = 255, message = "일본어 제목은 255자 이내로 입력해주세요")
+    private String titleJp;
     
-    @Size(max = 1000, message = "Description must be less than 1000 characters")
+    @Size(max = 2000, message = "설명은 2000자 이내로 입력해주세요")
     private String description;
     
-    private String coverImageUrl;
+    @NotBlank(message = "작가는 필수입니다")
+    @Size(max = 255, message = "작가명은 255자 이내로 입력해주세요")
+    private String author;
     
-    private String status = "ONGOING"; // ONGOING, COMPLETED
+    @Size(max = 255, message = "아티스트명은 255자 이내로 입력해주세요")
+    private String artist;
     
-    private Boolean active = true;
+    @Size(max = 50, message = "상태는 50자 이내로 입력해주세요")
+    private String status;
+    
+    @Size(max = 255, message = "이미지 URL은 255자 이내로 입력해주세요")
+    private String coverImage;
 }

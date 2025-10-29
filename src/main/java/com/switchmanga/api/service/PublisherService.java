@@ -4,6 +4,7 @@ import com.switchmanga.api.entity.Publisher;
 import com.switchmanga.api.entity.User;
 import com.switchmanga.api.entity.UserRole;
 import com.switchmanga.api.repository.PublisherRepository;
+import com.switchmanga.api.repository.SeriesRepository;
 import com.switchmanga.api.repository.VolumeRepository;
 import com.switchmanga.api.repository.OrderRepository;
 import com.switchmanga.api.dto.publisher.*;
@@ -40,7 +41,7 @@ public class PublisherService {
      */
     public List<PublisherInfoResponse> getAllPublishersPublic() {
         return publisherRepository.findAll().stream()
-                .filter(p -> Boolean.TRUE.equals(p.getActive()))  // 활성화된 출판사만
+                .filter(p -> Boolean.TRUE.equals(p.getActive()))
                 .map(PublisherInfoResponse::from)
                 .collect(Collectors.toList());
     }
@@ -138,16 +139,29 @@ public class PublisherService {
     
     /**
      * 내 출판사 정보 조회 (PUBLISHER용)
-     * User의 publisher 관계 사용
+     * ADMIN은 임시로 첫 번째 Publisher 반환
      */
     public PublisherInfoResponse getMyPublisher(User user) {
         validatePublisherRole(user);
         
-        // User에 연결된 Publisher 가져오기
-        Publisher publisher = user.getPublisher();
-        if (publisher == null) {
-            throw new RuntimeException("연결된 출판사가 없습니다. 관리자에게 문의하세요.");
+        // ADMIN이면 첫 번째 Publisher 반환 (임시 처리)
+        if (user.getRole() == UserRole.ADMIN) {
+            Publisher publisher = publisherRepository.findAll().stream()
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("출판사가 없습니다."));
+            return PublisherInfoResponse.from(publisher);
         }
+        
+        // TODO: User Entity에 publisher 관계 추가 후 활성화
+        // Publisher publisher = user.getPublisher();
+        // if (publisher == null) {
+        //     throw new RuntimeException("연결된 출판사가 없습니다. 관리자에게 문의하세요.");
+        // }
+        
+        // 임시: 첫 번째 Publisher 반환
+        Publisher publisher = publisherRepository.findAll().stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("출판사가 없습니다."));
         
         return PublisherInfoResponse.from(publisher);
     }
@@ -159,10 +173,25 @@ public class PublisherService {
     public PublisherInfoResponse updateMyPublisher(User user, PublisherUpdateRequest request) {
         validatePublisherRole(user);
         
-        Publisher publisher = user.getPublisher();
-        if (publisher == null) {
-            throw new RuntimeException("연결된 출판사가 없습니다.");
+        // ADMIN이면 첫 번째 Publisher 수정
+        if (user.getRole() == UserRole.ADMIN) {
+            Publisher publisher = publisherRepository.findAll().stream()
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("출판사가 없습니다."));
+            updatePublisherFields(publisher, request);
+            return PublisherInfoResponse.from(publisher);
         }
+        
+        // TODO: User Entity에 publisher 관계 추가 후 활성화
+        // Publisher publisher = user.getPublisher();
+        // if (publisher == null) {
+        //     throw new RuntimeException("연결된 출판사가 없습니다.");
+        // }
+        
+        // 임시: 첫 번째 Publisher 수정
+        Publisher publisher = publisherRepository.findAll().stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("출판사가 없습니다."));
         
         updatePublisherFields(publisher, request);
         
@@ -175,25 +204,40 @@ public class PublisherService {
     public PublisherStatsResponse getMyStats(User user) {
         validatePublisherRole(user);
         
-        Publisher publisher = user.getPublisher();
-        if (publisher == null) {
-            throw new RuntimeException("연결된 출판사가 없습니다.");
+        // ADMIN이면 첫 번째 Publisher 통계
+        Publisher publisher;
+        if (user.getRole() == UserRole.ADMIN) {
+            publisher = publisherRepository.findAll().stream()
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("출판사가 없습니다."));
+        } else {
+            // TODO: User Entity에 publisher 관계 추가 후 활성화
+            // publisher = user.getPublisher();
+            // if (publisher == null) {
+            //     throw new RuntimeException("연결된 출판사가 없습니다.");
+            // }
+            
+            // 임시: 첫 번째 Publisher
+            publisher = publisherRepository.findAll().stream()
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("출판사가 없습니다."));
         }
         
-        // 통계 계산 - Repository 메서드 사용
+        // 통계 계산
         Long totalSeries = seriesRepository.countByPublisherId(publisher.getId());
         Long totalVolumes = volumeRepository.countByPublisherId(publisher.getId());
         
         // Order 통계는 복잡한 연관관계 쿼리 필요 - 일단 0으로 설정
-        // TODO: 나중에 OrderRepository에 커스텀 쿼리 메서드 추가
         Long totalOrders = 0L;
         
         return PublisherStatsResponse.builder()
-                .publisherId(publisher.getId())
-                .publisherName(publisher.getName())
                 .totalSeries(totalSeries != null ? totalSeries : 0L)
                 .totalVolumes(totalVolumes != null ? totalVolumes : 0L)
-                .totalOrders(totalOrders)  // 항상 0L이므로 조건 불필요
+                .totalOrders(totalOrders)
+                .totalRevenue(0.0)
+                .monthlyRevenue(0.0)
+                .weeklyRevenue(0.0)
+                .dailyRevenue(0.0)
                 .build();
     }
     
@@ -211,7 +255,6 @@ public class PublisherService {
     
     /**
      * Publisher 필드 업데이트
-     * country는 최초 등록 시에만 설정 (수정 불가)
      */
     private void updatePublisherFields(Publisher publisher, PublisherUpdateRequest request) {
         if (request.getName() != null) {
@@ -223,7 +266,6 @@ public class PublisherService {
         if (request.getNameJp() != null) {
             publisher.setNameJp(request.getNameJp());
         }
-        // country 업데이트 제거 - PublisherUpdateRequest에 필드 없음
         if (request.getEmail() != null) {
             publisher.setEmail(request.getEmail());
         }
@@ -236,11 +278,13 @@ public class PublisherService {
         if (request.getDescription() != null) {
             publisher.setDescription(request.getDescription());
         }
+        if (request.getLogo() != null) {
+            publisher.setLogo(request.getLogo());
+        }
     }
     
     /**
      * ADMIN 권한 검증
-     * UserRole enum 사용
      */
     private void validateAdminRole(User user) {
         if (user.getRole() != UserRole.ADMIN) {
@@ -250,7 +294,7 @@ public class PublisherService {
     
     /**
      * PUBLISHER 권한 검증
-     * UserRole enum 사용
+     * ADMIN도 PUBLISHER 기능 사용 가능
      */
     private void validatePublisherRole(User user) {
         if (user.getRole() != UserRole.PUBLISHER && user.getRole() != UserRole.ADMIN) {
@@ -269,10 +313,14 @@ public class PublisherService {
             return;
         }
         
+        // TODO: User Entity에 publisher 관계 추가 후 활성화
         // PUBLISHER는 자기 Publisher만 접근
-        Publisher userPublisher = user.getPublisher();
-        if (userPublisher == null || !userPublisher.getId().equals(publisherId)) {
-            throw new RuntimeException("해당 출판사에 접근할 권한이 없습니다.");
-        }
+        // Publisher userPublisher = user.getPublisher();
+        // if (userPublisher == null || !userPublisher.getId().equals(publisherId)) {
+        //     throw new RuntimeException("해당 출판사에 접근할 권한이 없습니다.");
+        // }
+        
+        // 임시: 접근 허용
+        return;
     }
 }

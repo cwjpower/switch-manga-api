@@ -1,23 +1,25 @@
-// src/main/java/com/switchmanga/api/dto/publisher/PublisherUpdateRequest.java
-
 package com.switchmanga.api.dto.publisher;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Email;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * Publisher 정보 수정 요청 DTO
- * PUT /api/v1/publishers/me
+ * 출판사 정보 수정 요청 DTO
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class PublisherUpdateRequest {
     
+    private String name;
+    private String nameEn;
+    private String nameJp;
     private String logo;
     
+    @Email(message = "올바른 이메일 형식이 아닙니다")
     private String email;
     
     private String phone;
+    private String website;
+    private String description;
 }
