@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import com.switchmanga.api.dto.series.*;
 import com.switchmanga.api.service.SeriesService;
 import java.util.List;
+import com.switchmanga.api.dto.volume.*;
+import com.switchmanga.api.service.VolumeService;
 import jakarta.validation.Valid;
 
 /**
@@ -27,7 +29,9 @@ public class PublisherPortalController {
     
     private final PublisherService publisherService;
     private final SeriesService seriesService;  // ← 추가!
-    
+    private final VolumeService volumeService;
+
+
     @Operation(summary = "내 출판사 정보 조회", description = "로그인한 출판사의 정보를 조회합니다")
     @GetMapping
     @PreAuthorize("hasRole('PUBLISHER')")
@@ -106,4 +110,59 @@ public class PublisherPortalController {
         seriesService.deleteMySeries(user, seriesId);
         return ResponseEntity.noContent().build();
     }
+// ========================================
+    // 🔒 Volume 관리 API
+    // ========================================
+
+    @Operation(summary = "내 Volume 목록 조회", description = "로그인한 출판사의 Volume 목록을 조회합니다")
+    @GetMapping("/volumes")
+    @PreAuthorize("hasRole('PUBLISHER')")
+    public ResponseEntity<List<VolumeListResponse>> getMyVolumes(@AuthUser User user) {
+        List<VolumeListResponse> volumes = volumeService.getMyVolumes(user);
+        return ResponseEntity.ok(volumes);
+    }
+
+    @Operation(summary = "Volume 생성", description = "새로운 Volume을 생성합니다")
+    @PostMapping("/volumes")
+    @PreAuthorize("hasRole('PUBLISHER')")
+    public ResponseEntity<VolumeDetailResponse> createVolume(
+            @AuthUser User user,
+            @Valid @RequestBody VolumeCreateRequest request) {
+        VolumeDetailResponse created = volumeService.createMyVolume(user, request);
+        return ResponseEntity.ok(created);
+    }
+
+    @Operation(summary = "Volume 상세 조회", description = "특정 Volume의 상세 정보를 조회합니다")
+    @GetMapping("/volumes/{volumeId}")
+    @PreAuthorize("hasRole('PUBLISHER')")
+    public ResponseEntity<VolumeDetailResponse> getVolumeDetail(
+            @AuthUser User user,
+            @PathVariable Long volumeId) {
+        VolumeDetailResponse detail = volumeService.getMyVolumeDetail(user, volumeId);
+        return ResponseEntity.ok(detail);
+    }
+
+    @Operation(summary = "Volume 수정", description = "Volume 정보를 수정합니다")
+    @PutMapping("/volumes/{volumeId}")
+    @PreAuthorize("hasRole('PUBLISHER')")
+    public ResponseEntity<VolumeDetailResponse> updateVolume(
+            @AuthUser User user,
+            @PathVariable Long volumeId,
+            @Valid @RequestBody VolumeUpdateRequest request) {
+        VolumeDetailResponse updated = volumeService.updateMyVolume(user, volumeId, request);
+        return ResponseEntity.ok(updated);
+    }
+
+    @Operation(summary = "Volume 삭제", description = "Volume을 삭제합니다 (Soft Delete)")
+    @DeleteMapping("/volumes/{volumeId}")
+    @PreAuthorize("hasRole('PUBLISHER')")
+    public ResponseEntity<Void> deleteVolume(
+            @AuthUser User user,
+            @PathVariable Long volumeId) {
+        volumeService.deleteMyVolume(user, volumeId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
 }
