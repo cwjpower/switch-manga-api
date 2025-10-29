@@ -6,7 +6,6 @@ import com.switchmanga.api.entity.Series;
 import com.switchmanga.api.entity.Publisher;
 import com.switchmanga.api.entity.User;
 import com.switchmanga.api.repository.VolumeRepository;
-import com.switchmanga.api.repository.SeriesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

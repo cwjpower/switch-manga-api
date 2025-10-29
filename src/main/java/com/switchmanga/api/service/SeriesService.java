@@ -4,7 +4,6 @@ import com.switchmanga.api.dto.series.*;
 import com.switchmanga.api.entity.Series;
 import com.switchmanga.api.entity.Publisher;
 import com.switchmanga.api.entity.User;
-import com.switchmanga.api.repository.SeriesRepository;
 import com.switchmanga.api.repository.PublisherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

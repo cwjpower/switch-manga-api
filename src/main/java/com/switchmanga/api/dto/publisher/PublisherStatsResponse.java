@@ -1,34 +1,54 @@
+// src/main/java/com/switchmanga/api/dto/publisher/PublisherStatsResponse.java
+
 package com.switchmanga.api.dto.publisher;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * 출판사 통계 응답 DTO
+ * Publisher 통계 응답 DTO
+ * GET /api/v1/publishers/me/stats
  */
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PublisherStatsResponse {
-
-    private Long publisherId;
-    private String publisherName;
-
-    // 시리즈/권 통계
-    private Long totalSeries;           // 총 시리즈 수
-    private Long totalVolumes;          // 총 권 수
-
-    // 매출 통계
-    private Double totalRevenue;        // 총 매출
-    private Double publisherShare;      // 출판사 수익 (70%)
-    private Double platformFee;         // 플랫폼 수수료 (30%)
-
-    // 주문 통계
-    private Long totalOrders;           // 총 주문 수
-    private Long totalOrderItems;       // 총 주문 항목 수
-
-    // 리뷰 통계
-    private Long totalReviews;          // 총 리뷰 수
-    private Double averageRating;       // 평균 평점
+    
+    /**
+     * 총 시리즈 수
+     */
+    private Long totalSeries;
+    
+    /**
+     * 총 Volume 수
+     */
+    private Long totalVolumes;
+    
+    /**
+     * 총 주문 수
+     */
+    private Long totalOrders;
+    
+    /**
+     * 총 매출
+     */
+    private Double totalRevenue;
+    
+    /**
+     * 이번 달 매출
+     */
+    private Double monthlyRevenue;
+    
+    /**
+     * 이번 주 매출
+     */
+    private Double weeklyRevenue;
+    
+    /**
+     * 오늘 매출
+     */
+    private Double dailyRevenue;
 }

@@ -4,7 +4,6 @@ import com.switchmanga.api.entity.Publisher;
 import com.switchmanga.api.entity.User;
 import com.switchmanga.api.entity.UserRole;
 import com.switchmanga.api.repository.PublisherRepository;
-import com.switchmanga.api.repository.SeriesRepository;
 import com.switchmanga.api.repository.VolumeRepository;
 import com.switchmanga.api.repository.OrderRepository;
 import com.switchmanga.api.dto.publisher.*;
