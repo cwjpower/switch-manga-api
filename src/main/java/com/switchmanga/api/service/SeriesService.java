@@ -4,11 +4,12 @@ import com.switchmanga.api.dto.series.*;
 import com.switchmanga.api.entity.Series;
 import com.switchmanga.api.entity.Publisher;
 import com.switchmanga.api.entity.User;
+import com.switchmanga.api.entity.enums.UserRole;
 import com.switchmanga.api.repository.PublisherRepository;
+import com.switchmanga.api.repository.SeriesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.switchmanga.api.repository.SeriesRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -179,13 +180,27 @@ public class SeriesService {
 
     /**
      * User에서 Publisher 가져오기
+     * ADMIN은 임시로 첫 번째 Publisher 반환
      */
     private Publisher getPublisherFromUser(User user) {
-        Publisher publisher = user.getPublisher();
-        if (publisher == null) {
-            throw new RuntimeException("연결된 출판사가 없습니다.");
+        // ADMIN이면 첫 번째 Publisher 반환 (임시 처리)
+        if (user.getRole() == UserRole.ADMIN) {
+            return publisherRepository.findAll().stream()
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("출판사가 없습니다."));
         }
-        return publisher;
+        
+        // TODO: User Entity에 publisher 관계 추가 후 활성화
+        // Publisher publisher = user.getPublisher();
+        // if (publisher == null) {
+        //     throw new RuntimeException("연결된 출판사가 없습니다.");
+        // }
+        // return publisher;
+        
+        // 임시: 첫 번째 Publisher 반환
+        return publisherRepository.findAll().stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("출판사가 없습니다."));
     }
 
     /**
