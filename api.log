@@ -1,0 +1,99 @@
+nohup: ignoring input
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :resolveMainClassName UP-TO-DATE
+
+> Task :bootRun
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.6)
+
+2025-10-26T23:45:55.139Z  INFO 860219 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : Starting SwitchMangaApiApplication using Java 17.0.17 with PID 860219 (/home/cwjpower01/switch-manga-api/build/classes/java/main started by cwjpower01 in /home/cwjpower01/switch-manga-api)
+2025-10-26T23:45:55.144Z DEBUG 860219 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : Running with Spring Boot v3.5.6, Spring v6.2.11
+2025-10-26T23:45:55.147Z  INFO 860219 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : The following 1 profile is active: "local"
+2025-10-26T23:45:55.233Z  INFO 860219 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-10-26T23:45:55.234Z  INFO 860219 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-10-26T23:45:56.673Z  INFO 860219 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-10-26T23:45:56.806Z  INFO 860219 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 118 ms. Found 12 JPA repository interfaces.
+2025-10-26T23:45:57.618Z  INFO 860219 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-10-26T23:45:57.635Z  INFO 860219 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-10-26T23:45:57.635Z  INFO 860219 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-10-26T23:45:57.687Z  INFO 860219 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-10-26T23:45:57.688Z  INFO 860219 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2452 ms
+2025-10-26T23:45:57.775Z DEBUG 860219 --- [  restartedMain] c.s.a.security.JwtAuthenticationFilter   : Filter 'jwtAuthenticationFilter' configured for use
+2025-10-26T23:45:57.950Z  INFO 860219 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-10-26T23:45:58.015Z  INFO 860219 --- [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.29.Final
+2025-10-26T23:45:58.053Z  INFO 860219 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-10-26T23:45:58.397Z  INFO 860219 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-10-26T23:45:58.432Z  INFO 860219 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-10-26T23:45:58.545Z  INFO 860219 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.mariadb.jdbc.Connection@484c1433
+2025-10-26T23:45:58.547Z  INFO 860219 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-10-26T23:45:58.582Z  WARN 860219 --- [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-10-26T23:45:58.606Z  INFO 860219 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 11.8.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-10-26T23:46:00.232Z  INFO 860219 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-10-26T23:46:00.286Z DEBUG 860219 --- [  restartedMain] org.hibernate.SQL                        : 
+    alter table if exists series 
+       modify column average_rating DECIMAL(3,2) DEFAULT 0.0
+Hibernate: 
+    alter table if exists series 
+       modify column average_rating DECIMAL(3,2) DEFAULT 0.0
+2025-10-26T23:46:00.304Z DEBUG 860219 --- [  restartedMain] org.hibernate.SQL                        : 
+    alter table if exists users 
+       modify column role enum ('ADMIN','PUBLISHER','USER') not null
+Hibernate: 
+    alter table if exists users 
+       modify column role enum ('ADMIN','PUBLISHER','USER') not null
+2025-10-26T23:46:00.321Z DEBUG 860219 --- [  restartedMain] org.hibernate.SQL                        : 
+    alter table if exists volumes 
+       modify column average_rating DECIMAL(3,2) DEFAULT 0.0
+Hibernate: 
+    alter table if exists volumes 
+       modify column average_rating DECIMAL(3,2) DEFAULT 0.0
+2025-10-26T23:46:00.338Z DEBUG 860219 --- [  restartedMain] org.hibernate.SQL                        : 
+    alter table if exists wall_posts 
+       modify column target_type enum ('SERIES','VOLUME') not null
+Hibernate: 
+    alter table if exists wall_posts 
+       modify column target_type enum ('SERIES','VOLUME') not null
+2025-10-26T23:46:00.466Z  INFO 860219 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-10-26T23:46:00.963Z  INFO 860219 --- [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-10-26T23:46:03.043Z  WARN 860219 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-10-26T23:46:04.103Z  WARN 860219 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : Unable to start LiveReload server
+2025-10-26T23:46:04.143Z  WARN 860219 --- [  restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2025-10-26T23:46:04.150Z  INFO 860219 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-10-26T23:46:04.156Z  INFO 860219 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-10-26T23:46:04.172Z  INFO 860219 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-10-26T23:46:04.199Z  INFO 860219 --- [  restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-10-26T23:46:04.273Z ERROR 860219 --- [  restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+
+BUILD SUCCESSFUL in 14s
+4 actionable tasks: 1 executed, 3 up-to-date
