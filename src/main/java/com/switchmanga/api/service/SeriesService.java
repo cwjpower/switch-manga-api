@@ -4,7 +4,7 @@ import com.switchmanga.api.dto.series.*;
 import com.switchmanga.api.entity.Series;
 import com.switchmanga.api.entity.Publisher;
 import com.switchmanga.api.entity.User;
-import com.switchmanga.api.entity.enums.UserRole;
+import com.switchmanga.api.entity.UserRole;
 import com.switchmanga.api.repository.PublisherRepository;
 import com.switchmanga.api.repository.SeriesRepository;
 import lombok.RequiredArgsConstructor;
