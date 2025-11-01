@@ -82,3 +82,7 @@ This generated password is for development use only. Your security configuration
 2025-11-01T01:27:12.274Z DEBUG 936357 --- [nio-8080-exec-1] c.s.a.security.JwtAuthenticationFilter   : === JWT Filter Check ===
 2025-11-01T01:27:12.274Z DEBUG 936357 --- [nio-8080-exec-1] c.s.a.security.JwtAuthenticationFilter   : Request URI: /test
 2025-11-01T01:27:12.274Z DEBUG 936357 --- [nio-8080-exec-1] c.s.a.security.JwtAuthenticationFilter   : Should skip filter: true
+2025-11-01T01:37:53.170Z DEBUG 936357 --- [nio-8080-exec-2] c.s.a.security.JwtAuthenticationFilter   : === JWT Filter Check ===
+2025-11-01T01:37:53.171Z DEBUG 936357 --- [nio-8080-exec-2] c.s.a.security.JwtAuthenticationFilter   : Request URI: /
+2025-11-01T01:37:53.171Z DEBUG 936357 --- [nio-8080-exec-2] c.s.a.security.JwtAuthenticationFilter   : Should skip filter: false
+2025-11-01T01:37:53.171Z DEBUG 936357 --- [nio-8080-exec-2] c.s.a.security.JwtAuthenticationFilter   : No valid JWT token found
