@@ -37,6 +37,7 @@ public class SecurityConfig {
                         // 1. Public API (인증 불필요)
                         // ========================================
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/test").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         
                         // Publisher Public API
