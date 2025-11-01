@@ -15,28 +15,28 @@ nohup: ignoring input
 
  :: Spring Boot ::                (v3.5.6)
 
-2025-10-29T02:02:03.639Z  INFO 888748 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : Starting SwitchMangaApiApplication using Java 17.0.17 with PID 888748 (/home/cwjpower01/switch-manga-api/build/classes/java/main started by cwjpower01 in /home/cwjpower01/switch-manga-api)
-2025-10-29T02:02:03.643Z DEBUG 888748 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : Running with Spring Boot v3.5.6, Spring v6.2.11
-2025-10-29T02:02:03.644Z  INFO 888748 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : The following 1 profile is active: "local"
-2025-10-29T02:02:03.712Z  INFO 888748 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2025-10-29T02:02:03.712Z  INFO 888748 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2025-10-29T02:02:05.365Z  INFO 888748 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-10-29T02:02:05.487Z  INFO 888748 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 96 ms. Found 12 JPA repository interfaces.
-2025-10-29T02:02:06.240Z  INFO 888748 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
-2025-10-29T02:02:06.257Z  INFO 888748 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2025-10-29T02:02:06.258Z  INFO 888748 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.46]
-2025-10-29T02:02:06.314Z  INFO 888748 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2025-10-29T02:02:06.316Z  INFO 888748 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2595 ms
-2025-10-29T02:02:06.387Z DEBUG 888748 --- [  restartedMain] c.s.a.security.JwtAuthenticationFilter   : Filter 'jwtAuthenticationFilter' configured for use
-2025-10-29T02:02:06.538Z  INFO 888748 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-10-29T02:02:06.591Z  INFO 888748 --- [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.29.Final
-2025-10-29T02:02:06.630Z  INFO 888748 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2025-10-29T02:02:06.986Z  INFO 888748 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-10-29T02:02:07.020Z  INFO 888748 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2025-10-29T02:02:07.125Z  INFO 888748 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.mariadb.jdbc.Connection@45f2bff4
-2025-10-29T02:02:07.128Z  INFO 888748 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2025-10-29T02:02:07.165Z  WARN 888748 --- [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2025-10-29T02:02:07.190Z  INFO 888748 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+2025-11-01T00:07:06.814Z  INFO 934164 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : Starting SwitchMangaApiApplication using Java 17.0.17 with PID 934164 (/home/cwjpower01/switch-manga-api/build/classes/java/main started by cwjpower01 in /home/cwjpower01/switch-manga-api)
+2025-11-01T00:07:06.818Z DEBUG 934164 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : Running with Spring Boot v3.5.6, Spring v6.2.11
+2025-11-01T00:07:06.822Z  INFO 934164 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : The following 1 profile is active: "local"
+2025-11-01T00:07:06.933Z  INFO 934164 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-11-01T00:07:06.935Z  INFO 934164 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-11-01T00:07:08.293Z  INFO 934164 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-01T00:07:08.405Z  INFO 934164 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 101 ms. Found 12 JPA repository interfaces.
+2025-11-01T00:07:09.131Z  INFO 934164 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-11-01T00:07:09.155Z  INFO 934164 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-01T00:07:09.157Z  INFO 934164 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-11-01T00:07:09.247Z  INFO 934164 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-01T00:07:09.250Z  INFO 934164 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2312 ms
+2025-11-01T00:07:09.324Z DEBUG 934164 --- [  restartedMain] c.s.a.security.JwtAuthenticationFilter   : Filter 'jwtAuthenticationFilter' configured for use
+2025-11-01T00:07:09.472Z  INFO 934164 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-01T00:07:09.523Z  INFO 934164 --- [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.29.Final
+2025-11-01T00:07:09.559Z  INFO 934164 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-01T00:07:09.913Z  INFO 934164 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-01T00:07:09.946Z  INFO 934164 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-11-01T00:07:10.049Z  INFO 934164 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.mariadb.jdbc.Connection@640fa7ac
+2025-11-01T00:07:10.053Z  INFO 934164 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-11-01T00:07:10.089Z  WARN 934164 --- [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-01T00:07:10.117Z  INFO 934164 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
 	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
 	Database driver: undefined/unknown
 	Database version: 11.8.3
@@ -44,63 +44,48 @@ nohup: ignoring input
 	Isolation level: undefined/unknown
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
-2025-10-29T02:02:08.803Z  INFO 888748 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2025-10-29T02:02:08.868Z DEBUG 888748 --- [  restartedMain] org.hibernate.SQL                        : 
+2025-11-01T00:07:11.673Z  INFO 934164 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-01T00:07:11.734Z DEBUG 934164 --- [  restartedMain] org.hibernate.SQL                        : 
     alter table if exists series 
        modify column average_rating DECIMAL(3,2) DEFAULT 0.0
 Hibernate: 
     alter table if exists series 
        modify column average_rating DECIMAL(3,2) DEFAULT 0.0
-2025-10-29T02:02:08.889Z DEBUG 888748 --- [  restartedMain] org.hibernate.SQL                        : 
+2025-11-01T00:07:11.752Z DEBUG 934164 --- [  restartedMain] org.hibernate.SQL                        : 
     alter table if exists users 
        modify column role enum ('ADMIN','PUBLISHER','USER') not null
 Hibernate: 
     alter table if exists users 
        modify column role enum ('ADMIN','PUBLISHER','USER') not null
-2025-10-29T02:02:08.910Z DEBUG 888748 --- [  restartedMain] org.hibernate.SQL                        : 
+2025-11-01T00:07:11.769Z DEBUG 934164 --- [  restartedMain] org.hibernate.SQL                        : 
     alter table if exists volumes 
        modify column average_rating DECIMAL(3,2) DEFAULT 0.0
 Hibernate: 
     alter table if exists volumes 
        modify column average_rating DECIMAL(3,2) DEFAULT 0.0
-2025-10-29T02:02:08.929Z DEBUG 888748 --- [  restartedMain] org.hibernate.SQL                        : 
+2025-11-01T00:07:11.786Z DEBUG 934164 --- [  restartedMain] org.hibernate.SQL                        : 
     alter table if exists wall_posts 
        modify column target_type enum ('SERIES','VOLUME') not null
 Hibernate: 
     alter table if exists wall_posts 
        modify column target_type enum ('SERIES','VOLUME') not null
-2025-10-29T02:02:09.081Z  INFO 888748 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-10-29T02:02:09.562Z  INFO 888748 --- [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2025-10-29T02:02:11.526Z  WARN 888748 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2025-10-29T02:02:11.898Z  WARN 888748 --- [  restartedMain] .s.s.UserDetailsServiceAutoConfiguration : 
+2025-11-01T00:07:11.927Z  INFO 934164 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-01T00:07:12.402Z  INFO 934164 --- [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-11-01T00:07:14.230Z  WARN 934164 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-01T00:07:14.577Z  WARN 934164 --- [  restartedMain] .s.s.UserDetailsServiceAutoConfiguration : 
 
-Using generated security password: c596dce0-a720-4122-859a-7387daa27b68
+Using generated security password: 4961f3aa-cc13-4827-80d0-8d993d8d07a8
 
 This generated password is for development use only. Your security configuration must be updated before running your application in production.
 
-2025-10-29T02:02:11.909Z  INFO 888748 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
-2025-10-29T02:02:12.398Z  WARN 888748 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : Unable to start LiveReload server
-2025-10-29T02:02:12.442Z  WARN 888748 --- [  restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
-2025-10-29T02:02:12.449Z  INFO 888748 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2025-10-29T02:02:12.453Z  INFO 888748 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2025-10-29T02:02:12.489Z  INFO 888748 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-2025-10-29T02:02:12.515Z  INFO 888748 --- [  restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
-
-Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2025-10-29T02:02:12.539Z ERROR 888748 --- [  restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
-
-***************************
-APPLICATION FAILED TO START
-***************************
-
-Description:
-
-Web server failed to start. Port 8080 was already in use.
-
-Action:
-
-Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
-
-
-BUILD SUCCESSFUL in 14s
-4 actionable tasks: 1 executed, 3 up-to-date
+2025-11-01T00:07:14.587Z  INFO 934164 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-11-01T00:07:15.089Z  INFO 934164 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-11-01T00:07:15.139Z  INFO 934164 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-11-01T00:07:15.156Z  INFO 934164 --- [  restartedMain] c.s.api.SwitchMangaApiApplication        : Started SwitchMangaApiApplication in 9.024 seconds (process running for 9.545)
+2025-11-01T00:07:28.830Z  INFO 934164 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-01T00:07:28.830Z  INFO 934164 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-01T00:07:28.833Z  INFO 934164 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-11-01T00:07:28.878Z DEBUG 934164 --- [nio-8080-exec-1] c.s.a.security.JwtAuthenticationFilter   : === JWT Filter Check ===
+2025-11-01T00:07:28.879Z DEBUG 934164 --- [nio-8080-exec-1] c.s.a.security.JwtAuthenticationFilter   : Request URI: /test
+2025-11-01T00:07:28.880Z DEBUG 934164 --- [nio-8080-exec-1] c.s.a.security.JwtAuthenticationFilter   : Should skip filter: false
+2025-11-01T00:07:28.881Z DEBUG 934164 --- [nio-8080-exec-1] c.s.a.security.JwtAuthenticationFilter   : No valid JWT token found
