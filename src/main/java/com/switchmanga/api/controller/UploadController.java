@@ -1,6 +1,7 @@
 package com.switchmanga.api.controller;
 
 import com.switchmanga.api.dto.upload.ImageUploadResponse;
+import com.switchmanga.api.dto.upload.ZipUploadResponse;
 import com.switchmanga.api.service.FileUploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,34 @@ public class UploadController {
             return ResponseEntity.ok(response);
         } else {
             log.error("Image upload failed: {}", response.getErrorMessage());
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(response);
+        }
+    }
+
+    /**
+     * ZIP 파일 업로드 및 압축 해제 API
+     *
+     * @param file 업로드할 ZIP 파일
+     * @return 업로드 및 압축 해제 결과
+     */
+    @PostMapping("/zip")
+    public ResponseEntity<ZipUploadResponse> uploadZip(
+            @RequestParam("file") MultipartFile file) {
+
+        log.info("ZIP upload request received: {} ({}MB)",
+                file.getOriginalFilename(),
+                file.getSize() / 1024 / 1024);
+
+        ZipUploadResponse response = fileUploadService.uploadAndExtractZip(file);
+
+        if (response.isSuccess()) {
+            log.info("ZIP uploaded and extracted successfully: {} files",
+                    response.getExtractedFileCount());
+            return ResponseEntity.ok(response);
+        } else {
+            log.error("ZIP upload failed: {}", response.getErrorMessage());
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(response);
