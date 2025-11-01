@@ -27,6 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // ⭐ 필터를 건너뛸 경로 목록 (Public API만!)
     private static final List<String> EXCLUDED_PATHS = List.of(
+            "/test",              // ⭐ 추가
             "/api/v1/auth/",
             "/swagger-ui/",
             "/v3/api-docs/",
