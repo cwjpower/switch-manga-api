@@ -117,13 +117,17 @@ public class FileUploadService {
 
             log.info("Extracted {} files from ZIP", extractedFiles.size());
 
-            // 7. AVF 파일 자동 감지
-            Path avfPath = pagesDir.resolve("frame.avf");
-            boolean hasAvf = Files.exists(avfPath);
-            String avfFilePath = hasAvf ? "/uploads/books/" + bookDir.getFileName() + "/pages/frame.avf" : null;
+            // 7. AVF 파일 자동 감지 (재귀 검색)
+            Path avfPath = findAvfFile(pagesDir);
+            boolean hasAvf = avfPath != null;
+            String avfFilePath = null;
 
             if (hasAvf) {
-                log.info("AVF file detected: {}", avfPath);
+                // 상대 경로 생성 (pages/ 기준)
+                Path relativePath = pagesDir.relativize(avfPath);
+                avfFilePath = "/uploads/books/" + bookDir.getFileName() + "/pages/" +
+                        relativePath.toString().replace("\\", "/");
+                log.info("AVF file detected: {}", avfFilePath);
             }
 
             // 8. 상대 경로 생성
@@ -310,6 +314,18 @@ public class FileUploadService {
             }
         } catch (IOException e) {
             log.error("Failed to delete directory: {}", directory, e);
+        }
+    }
+
+    private Path findAvfFile(Path directory) {
+        try {
+            return Files.walk(directory)
+                    .filter(path -> path.getFileName().toString().equals("frame.avf"))
+                    .findFirst()
+                    .orElse(null);
+        } catch (IOException e) {
+            log.error("Error searching for AVF file", e);
+            return null;
         }
     }
 }
