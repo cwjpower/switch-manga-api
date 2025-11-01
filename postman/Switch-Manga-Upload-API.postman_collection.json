@@ -1,0 +1,232 @@
+{
+  "info": {
+    "name": "Switch Manga - Upload API",
+    "description": "Switch Manga 업로드 API 테스트 컬렉션",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "1"
+  },
+  "item": [
+    {
+      "name": "1. Test API",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/upload/test",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "upload", "test"]
+        },
+        "description": "서버 상태 확인"
+      },
+      "response": []
+    },
+    {
+      "name": "2. Upload Image (Cover)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "/path/to/cover.jpg",
+              "description": "표지 이미지 파일"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/upload/image",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "upload", "image"]
+        },
+        "description": "표지 이미지 업로드 (최대 10MB)"
+      },
+      "response": []
+    },
+    {
+      "name": "3. Upload ZIP (Comic Pages)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "/path/to/comic.zip",
+              "description": "만화 페이지 ZIP 파일"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/upload/zip",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "upload", "zip"]
+        },
+        "description": "ZIP 파일 업로드 및 자동 압축 해제 (최대 1GB)"
+      },
+      "response": []
+    },
+    {
+      "name": "4. Upload Volume (Complete)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "coverImage",
+              "type": "file",
+              "src": "/path/to/cover.jpg",
+              "description": "표지 이미지 (필수)"
+            },
+            {
+              "key": "zipFile",
+              "type": "file",
+              "src": "/path/to/comic.zip",
+              "description": "만화 페이지 ZIP (선택)"
+            },
+            {
+              "key": "seriesId",
+              "value": "1",
+              "type": "text",
+              "description": "시리즈 ID (필수)"
+            },
+            {
+              "key": "title",
+              "value": "Spider-Man Vol. 1",
+              "type": "text",
+              "description": "제목 (필수)"
+            },
+            {
+              "key": "titleEn",
+              "value": "Spider-Man Vol. 1",
+              "type": "text",
+              "description": "영문 제목"
+            },
+            {
+              "key": "titleJp",
+              "value": "スパイダーマン Vol. 1",
+              "type": "text",
+              "description": "일본어 제목"
+            },
+            {
+              "key": "author",
+              "value": "Stan Lee",
+              "type": "text",
+              "description": "저자 (필수)"
+            },
+            {
+              "key": "authorEn",
+              "value": "Stan Lee",
+              "type": "text",
+              "description": "영문 저자"
+            },
+            {
+              "key": "authorJp",
+              "value": "スタン・リー",
+              "type": "text",
+              "description": "일본어 저자"
+            },
+            {
+              "key": "price",
+              "value": "9.99",
+              "type": "text",
+              "description": "가격 (필수)"
+            },
+            {
+              "key": "discountRate",
+              "value": "10",
+              "type": "text",
+              "description": "할인율 (0-100)"
+            },
+            {
+              "key": "volumeNumber",
+              "value": "1",
+              "type": "text",
+              "description": "권수 (필수)"
+            },
+            {
+              "key": "isbn",
+              "value": "978-1-23456-789-0",
+              "type": "text",
+              "description": "ISBN"
+            },
+            {
+              "key": "publishedDate",
+              "value": "2024-01-01",
+              "type": "text",
+              "description": "출판일 (YYYY-MM-DD)"
+            },
+            {
+              "key": "description",
+              "value": "스파이더맨의 첫 번째 모험",
+              "type": "text",
+              "description": "설명"
+            },
+            {
+              "key": "descriptionEn",
+              "value": "Spider-Man's first adventure",
+              "type": "text",
+              "description": "영문 설명"
+            },
+            {
+              "key": "descriptionJp",
+              "value": "スパイダーマンの最初の冒険",
+              "type": "text",
+              "description": "일본어 설명"
+            },
+            {
+              "key": "previewPages",
+              "value": "5",
+              "type": "text",
+              "description": "미리보기 페이지 수"
+            },
+            {
+              "key": "ageRating",
+              "value": "전체이용가",
+              "type": "text",
+              "description": "연령 등급"
+            },
+            {
+              "key": "freeTrialDays",
+              "value": "7",
+              "type": "text",
+              "description": "무료 체험 일수"
+            },
+            {
+              "key": "isFree",
+              "value": "false",
+              "type": "text",
+              "description": "무료 여부"
+            },
+            {
+              "key": "hasAction",
+              "value": "true",
+              "type": "text",
+              "description": "Action Viewer 지원"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/upload/volume",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "upload", "volume"]
+        },
+        "description": "통합 Volume 업로드 (이미지 + ZIP + 정보)"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://34.64.84.117:8080",
+      "type": "string"
+    }
+  ]
+}
