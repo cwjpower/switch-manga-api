@@ -38,6 +38,7 @@ public class SecurityConfig {
                         // ========================================
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/test").permitAll()
+                        .requestMatchers("/api/v1/upload/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         
                         // Publisher Public API

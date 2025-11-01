@@ -16,8 +16,10 @@ spring:
   
   servlet:
     multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
+      enabled: true
+      max-file-size: 100MB        # 단일 파일 최대 크기
+      max-request-size: 100MB     # 전체 요청 최대 크기
+      file-size-threshold: 1MB    # 메모리에 저장할 임계값
 
 logging:
   level:
@@ -27,6 +29,10 @@ logging:
 ---
 # 개발 환경 (로컬)
 spring:
+  config:
+    activate:
+      on-profile: local
+
   datasource:
     url: jdbc:mariadb://34.64.84.117:33060/switchmanga
     username: switchmanga
@@ -36,4 +42,11 @@ spring:
 # JWT 설정
 jwt:
   secret: mySecretKeyForJWTTokenGenerationThatIsAtLeast256BitsLongForHS256Algorithm
-  expiration: 86400000
+  expiration: 86400000  # 24시간 (밀리초)
+
+# 파일 업로드 경로 설정
+file:
+  upload:
+    base-dir: /home/cwjpower01/switch-manga-api/uploads
+    books-dir: books
+    temp-dir: temp
