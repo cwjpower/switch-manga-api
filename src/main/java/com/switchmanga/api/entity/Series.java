@@ -78,11 +78,11 @@ public class Series {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publisher_id")
     private Publisher publisher;
-
+/*
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
-
+*/
     @JsonIgnoreProperties({"series"})
     @OneToMany(mappedBy = "series", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
