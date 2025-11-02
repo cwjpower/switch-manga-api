@@ -1,5 +1,6 @@
 package com.switchmanga.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,7 +16,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder  // ← 이거 추가!
+@Builder
 public class Publisher {
 
     @Id
@@ -31,10 +32,10 @@ public class Publisher {
     @Column(name = "name_jp", length = 100)
     private String nameJp;
 
-    @Column(length = 255)
+    @Column(length = 500)
     private String logo;
 
-    @Column(nullable = false, length = 50)
+    @Column(length = 2)
     private String country;
 
     @Column(length = 100)
@@ -43,13 +44,14 @@ public class Publisher {
     @Column(length = 20)
     private String phone;
 
-    @Column(length = 255)
+    @Column(length = 200)
     private String website;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
+    @Builder.Default
+    @Column(nullable = false)
     private Boolean active = true;
 
     @CreationTimestamp
@@ -60,12 +62,14 @@ public class Publisher {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // 관계 추가
-    @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL)
+    // 관계 설정
+    @JsonIgnoreProperties({"publisher", "volumes"})
+    @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<User> users = new ArrayList<>();
 
-    @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({"publisher", "volumes"})
+    @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Series> series = new ArrayList<>();
 }

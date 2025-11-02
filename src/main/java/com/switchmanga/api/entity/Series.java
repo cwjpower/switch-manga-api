@@ -1,15 +1,16 @@
 package com.switchmanga.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "series")
@@ -17,62 +18,52 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Series {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 200)
     private String title;
 
-    @Column(name = "title_en", length = 255)
+    @Column(name = "title_en", length = 200)
     private String titleEn;
 
-    @Column(name = "title_jp", length = 255)
+    @Column(name = "title_jp", length = 200)
     private String titleJp;
 
-    @Column(length = 255)
+    @Column(nullable = false, length = 100)
     private String author;
 
-    @Column(length = 255)
+    @Column(length = 100)
     private String artist;
 
-    @Column(name = "cover_image", length = 255)
+    @Column(name = "cover_image", length = 500)
     private String coverImage;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(length = 50)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private SeriesStatus status;
 
     @Column(name = "release_date")
-    private LocalDateTime releaseDate;
+    private LocalDate releaseDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "publisher_id", nullable = false)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private Publisher publisher;
-
-    @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
-    private Boolean active = true;
-
-    // ⭐ 카테고리 ID (필요하면 추가, 아니면 Repository에서 삭제)
-    @Column(name = "category_id")
-    private Long categoryId;
-
-    // ⭐ 조회수
-    @Column(name = "view_count", columnDefinition = "BIGINT DEFAULT 0")
+    @Column(name = "view_count")
+    @Builder.Default
     private Long viewCount = 0L;
 
-    // ⭐ 평균 평점
-    @Column(name = "average_rating", columnDefinition = "DECIMAL(3,2) DEFAULT 0.0")
-    private Double averageRating = 0.0;
-
-    // ⭐ 리뷰 개수
-    @Column(name = "review_count", columnDefinition = "INT DEFAULT 0")
+    @Column(name = "review_count")
+    @Builder.Default
     private Integer reviewCount = 0;
+
+    @Column(name = "average_rating", precision = 3, scale = 2)
+    @Builder.Default
+    private BigDecimal averageRating = BigDecimal.ZERO;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -81,4 +72,29 @@ public class Series {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    // 관계 설정
+    @JsonIgnoreProperties({"series", "users"})
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "publisher_id")
+    private Publisher publisher;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @JsonIgnoreProperties({"series"})
+    @OneToMany(mappedBy = "series", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Volume> volumes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "series", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Review> reviews = new ArrayList<>();
+
+    public enum SeriesStatus {
+        ONGOING,
+        COMPLETED,
+        HIATUS
+    }
 }
