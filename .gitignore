@@ -36,3 +36,19 @@ out/
 ### VS Code ###
 .vscode/
 app.log
+
+# 로그 파일
+*.log
+api.log
+app.log
+
+# 업로드 폴더
+uploads/
+
+# 백업 파일
+*.backup
+*.gcp-backup
+
+# 환경별 설정 (선택적)
+application-local.yml
+application-prod.yml
