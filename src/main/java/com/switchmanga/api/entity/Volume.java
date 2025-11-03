@@ -43,11 +43,29 @@ public class Volume {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "description_en", columnDefinition = "TEXT")
+    private String descriptionEn;
+
+    @Column(name = "description_jp", columnDefinition = "TEXT")
+    private String descriptionJp;
+
     @Column(name = "publication_date")
     private LocalDate publicationDate;
 
+    // 페이지 관련
     @Column(name = "page_count")
     private Integer pageCount;
+
+    @Column(name = "preview_pages")
+    private Integer previewPages;
+
+    // 연령/등급
+    @Column(name = "age_rating", length = 10)
+    private String ageRating;
+
+    // 무료 체험
+    @Column(name = "free_trial_days")
+    private Integer freeTrialDays;
 
     @Column(precision = 10, scale = 2)
     private BigDecimal price;
@@ -56,14 +74,26 @@ public class Volume {
     @Builder.Default
     private Integer discountRate = 0;
 
-    @Column(length = 10)
+    @Column(name = "isbn", length = 10)
     private String isbn;
 
     @Column(length = 100)
     private String author;
 
+    @Column(name = "author_en", length = 100)
+    private String authorEn;
+
+    @Column(name = "author_jp", length = 100)
+    private String authorJp;
+
     @Column(length = 100)
     private String artist;
+
+    @Column(name = "artist_en", length = 100)
+    private String artistEn;
+
+    @Column(name = "artist_jp", length = 100)
+    private String artistJp;
 
     @Column(name = "has_action")
     @Builder.Default

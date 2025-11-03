@@ -65,6 +65,10 @@ public class Series {
     @Builder.Default
     private BigDecimal averageRating = BigDecimal.ZERO;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean active = true;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -88,9 +92,9 @@ public class Series {
     @Builder.Default
     private List<Volume> volumes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "series", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Review> reviews = new ArrayList<>();
+    //@OneToMany(mappedBy = "series", cascade = CascadeType.ALL, orphanRemoval = true)
+    //@Builder.Default
+   // private List<Review> reviews = new ArrayList<>();
 
     public enum SeriesStatus {
         ONGOING,

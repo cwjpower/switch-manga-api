@@ -36,10 +36,17 @@ public class SecurityConfig {
                         // ========================================
                         // 1. Public API (인증 불필요)
                         // ========================================
+                        .requestMatchers("/").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/test").permitAll()
                         .requestMatchers("/api/v1/upload/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
+
+                        // Swagger UI
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-resources/**").permitAll()
                         
                         // Publisher Public API
                         .requestMatchers("/api/v1/publishers").permitAll()

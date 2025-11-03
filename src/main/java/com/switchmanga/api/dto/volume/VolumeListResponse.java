@@ -2,7 +2,8 @@ package com.switchmanga.api.dto.volume;
 
 import com.switchmanga.api.entity.Volume;
 import lombok.*;
-
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalDateTime;
 
 /**
@@ -29,7 +30,7 @@ public class VolumeListResponse {
     
     private Double price;
     private String isbn;
-    private LocalDateTime publicationDate;
+    private LocalDate publicationDate;
     
     private Integer pageCount;
     private Boolean active;
@@ -50,7 +51,7 @@ public class VolumeListResponse {
                 .titleEn(volume.getTitleEn())
                 .titleJp(volume.getTitleJp())
                 .coverImage(volume.getCoverImage())
-                .price(volume.getPrice())
+                .price(volume.getPrice() != null ? volume.getPrice().doubleValue() : 0.0)
                 .isbn(volume.getIsbn())
                 .publicationDate(volume.getPublicationDate())
                 .pageCount(volume.getPageCount())

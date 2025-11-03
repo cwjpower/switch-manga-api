@@ -7,8 +7,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-public class TestController {
-    
+public class HomeController {
+
+    @GetMapping("/")
+    public Map<String, Object> home() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("service", "Switch Manga API");
+        response.put("version", "1.0.0");
+        response.put("message", "Welcome to Switch Manga API! 🚀");
+        response.put("swagger", "http://localhost:8080/swagger-ui.html");
+        return response;
+    }
+
     @GetMapping("/test")
     public Map<String, Object> test() {
         Map<String, Object> response = new HashMap<>();

@@ -2,8 +2,9 @@ package com.switchmanga.api.dto.volume;
 
 import com.switchmanga.api.entity.Volume;
 import lombok.*;
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 
 /**
  * 권(Volume) 상세 조회 응답 DTO
@@ -32,7 +33,7 @@ public class VolumeDetailResponse {
     
     private Double price;
     private String isbn;
-    private LocalDateTime publicationDate;
+    private LocalDate publicationDate;
     
     private String coverImage;
     
@@ -60,7 +61,8 @@ public class VolumeDetailResponse {
                 .titleEn(volume.getTitleEn())
                 .titleJp(volume.getTitleJp())
                 .description(volume.getDescription())
-                .price(volume.getPrice())
+                .price(volume.getPrice() != null ?
+                        volume.getPrice().doubleValue() : 0.0)
                 .isbn(volume.getIsbn())
                 .publicationDate(volume.getPublicationDate())
                 .coverImage(volume.getCoverImage())

@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "payments")
@@ -30,8 +31,8 @@ public class Payment {
     @Column(name = "payment_number", unique = true, nullable = false, length = 50)
     private String paymentNumber;  // 결제번호 (예: PAY-20251024-0001)
 
-    @Column(nullable = false)
-    private Double amount;  // 결제 금액
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal amount;  // 결제 금액
 
     @Column(name = "payment_method", length = 20, nullable = false)
     private String paymentMethod;  // 결제 수단: CARD, CASH, POINT
@@ -54,8 +55,8 @@ public class Payment {
     @Column(name = "installment_months")
     private Integer installmentMonths = 0;  // 할부 개월 (0: 일시불)
 
-    @Column(name = "refund_amount")
-    private Double refundAmount = 0.0;  // 환불 금액
+    @Column(name = "refund_amount", precision = 10, scale = 2)
+    private BigDecimal refundAmount;  // 환불 금액
 
     @Column(name = "refund_reason", length = 500)
     private String refundReason;  // 환불 사유

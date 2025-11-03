@@ -131,7 +131,9 @@ public class SeriesService {
         series.setAuthor(request.getAuthor());
         series.setArtist(request.getArtist());
         series.setDescription(request.getDescription());
-        series.setStatus(request.getStatus() != null ? request.getStatus() : "ONGOING");
+        series.setStatus(request.getStatus() != null ?
+                Series.SeriesStatus.valueOf(request.getStatus()) :
+                Series.SeriesStatus.ONGOING);
         series.setCoverImage(request.getCoverImage());
         series.setActive(true);
 
@@ -237,7 +239,9 @@ public class SeriesService {
             series.setDescription(request.getDescription());
         }
         if (request.getStatus() != null) {
-            series.setStatus(request.getStatus());
+            if (request.getStatus() != null) {
+                series.setStatus(Series.SeriesStatus.valueOf(request.getStatus()));
+            }
         }
         if (request.getCoverImage() != null) {
             series.setCoverImage(request.getCoverImage());

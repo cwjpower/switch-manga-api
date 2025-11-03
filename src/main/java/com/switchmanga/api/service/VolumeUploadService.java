@@ -11,12 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import java.math.BigDecimal;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.time.LocalDateTime;        // ← 이거 추가!
 import java.time.format.DateTimeFormatter;
 
 @Slf4j
@@ -89,7 +87,7 @@ public class VolumeUploadService {
                     .author(request.getAuthor())
                     .authorEn(request.getAuthorEn())
                     .authorJp(request.getAuthorJp())
-                    .price(request.getPrice())
+                    .price(BigDecimal.valueOf(request.getPrice()))
                     .discountRate(request.getDiscountRate() != null ? request.getDiscountRate() : 0)
                     .isbn(request.getIsbn())
                     .publicationDate(parseDate(request.getPublishedDate()))  // publishedDate → publicationDate
@@ -142,16 +140,15 @@ public class VolumeUploadService {
     /**
      * 날짜 문자열을 LocalDateTime으로 변환
      */
-    private LocalDateTime parseDate(String dateStr) {
-        if (dateStr == null || dateStr.isEmpty()) {
+    private LocalDate parseDate(String dateString) {
+        if (dateString == null || dateString.isEmpty()) {
             return null;
         }
-
         try {
-            LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ISO_DATE);
-            return date.atStartOfDay(); // LocalDate → LocalDateTime 변환
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            return LocalDate.parse(dateString, formatter);
         } catch (Exception e) {
-            log.warn("Failed to parse date: {}", dateStr);
+            log.warn("Failed to parse date: {}", dateString);
             return null;
         }
     }

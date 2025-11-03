@@ -2,6 +2,9 @@ package com.switchmanga.api.dto.series;
 
 import com.switchmanga.api.entity.Series;
 import lombok.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 import java.time.LocalDateTime;
 
@@ -29,7 +32,7 @@ public class SeriesDetailResponse {
     
     private String status;
     private String coverImage;
-    private LocalDateTime releaseDate;
+    private LocalDate releaseDate;
     
     private Boolean active;
     private LocalDateTime createdAt;
@@ -49,7 +52,7 @@ public class SeriesDetailResponse {
                 .artist(series.getArtist())
                 .publisherId(series.getPublisher() != null ? series.getPublisher().getId() : null)
                 .publisherName(series.getPublisher() != null ? series.getPublisher().getName() : null)
-                .status(series.getStatus())
+                .status(series.getStatus().name())
                 .coverImage(series.getCoverImage())
                 .releaseDate(series.getReleaseDate())
                 .active(series.getActive())

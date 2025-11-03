@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "order_items")
@@ -32,13 +33,13 @@ public class OrderItem {
     private Volume volume;
 
     @Column(nullable = false)
-    private Double price;  // 구매 당시 가격
+    private BigDecimal price; // 구매 당시 가격
 
     @Column(nullable = false)
     private Integer quantity = 1;  // 수량 (보통 1)
 
     @Column(nullable = false)
-    private Double subtotal;  // 소계 (price * quantity)
+    private BigDecimal subtotal;  // 소계 (price * quantity)
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -48,6 +49,8 @@ public class OrderItem {
     @PrePersist
     @PreUpdate
     public void calculateSubtotal() {
-        this.subtotal = this.price * this.quantity;
+        if (this.price != null && this.quantity != null) {
+            this.subtotal = this.price.multiply(BigDecimal.valueOf(this.quantity));
+        }
     }
 }

@@ -50,12 +50,12 @@ public interface SeriesRepository extends JpaRepository<Series, Long> {
     /**
      * 카테고리별 시리즈 조회
      */
-    List<Series> findByCategoryId(Long categoryId);
+    //List<Series> findByCategoryId(Long categoryId);
     
     /**
      * 카테고리별 + 활성화 시리즈
      */
-    List<Series> findByCategoryIdAndActive(Long categoryId, Boolean active);
+    //List<Series> findByCategoryIdAndActive(Long categoryId, Boolean active);
     
     /**
      * 제목으로 검색 (부분 일치)
