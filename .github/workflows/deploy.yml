@@ -1,0 +1,70 @@
+name: Deploy Switch Manga API to Oracle Cloud
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🚀 Deploy to Oracle Cloud
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.ORACLE_HOST }}
+          username: ${{ secrets.ORACLE_USER }}
+          key: ${{ secrets.ORACLE_SSH_KEY }}
+          script: |
+            echo "============================================"
+            echo "🚀 Starting Switch Manga API Deployment"
+            echo "============================================"
+            
+            cd /home/ubuntu/switch-manga-api
+            
+            echo "📍 Current directory: $(pwd)"
+            echo "📂 Current branch: $(git branch --show-current)"
+            
+            echo "📥 Pulling latest code from GitHub..."
+            git fetch origin
+            git reset --hard origin/main || git reset --hard origin/master
+            
+            echo "🔧 Setting permissions..."
+            chmod +x ./gradlew
+            
+            echo "⏹️  Stopping old process..."
+            pkill -f 'switch-manga-api' || true
+            sleep 3
+            
+            echo "🔨 Building project..."
+            ./gradlew clean build -x test
+            
+            if [ -f "build/libs/switch-manga-api-0.0.1-SNAPSHOT.jar" ]; then
+              echo "✅ Build successful!"
+            else
+              echo "❌ Build failed!"
+              exit 1
+            fi
+            
+            echo "▶️  Starting new process..."
+            nohup java -jar build/libs/switch-manga-api-0.0.1-SNAPSHOT.jar > ~/api.log 2>&1 &
+            
+            echo "⏳ Waiting for API to start..."
+            sleep 10
+            
+            echo "🔍 Checking API status..."
+            if curl -f http://localhost:8081/api/v1/publishers > /dev/null 2>&1; then
+              echo "✅ API is running successfully!"
+            else
+              echo "⚠️  API might not be ready yet. Check logs: tail -f ~/api.log"
+            fi
+            
+            echo "============================================"
+            echo "✅ Deployment completed!"
+            echo "🌐 API URL: http://152.67.199.56:8081/api/v1"
+            echo "📋 Logs: tail -f ~/api.log"
+            echo "============================================"
