@@ -21,14 +21,14 @@ spring:
       max-file-size: 1024MB
       max-request-size: 1024MB
 
-  # 기본 DB 설정 (프로파일 없을 때)
-datasource:
-  driver-class-name: org.mariadb.jdbc.Driver
-  url: jdbc:mariadb://localhost:33060/switchmanga?allowPublicKeyRetrieval=true&useSSL=false
-  username: root
-  password: rootpass
-  hikari:
-    maximum-pool-size: 10
+  # 기본 DB 설정 (프로파일 없을 때 사용)
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:33060/switchmanga?allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: rootpass
+    hikari:
+      maximum-pool-size: 10
 
 # JWT 설정
 jwt:
@@ -55,7 +55,7 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/switchmanga?allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mariadb://localhost:33060/switchmanga?allowPublicKeyRetrieval=true&useSSL=false
     username: root
     password: rootpass
     hikari:
@@ -81,7 +81,7 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://mariadb:33060/switchmanga?useSSL=true
+    url: jdbc:mariadb://mariadb:3306/switchmanga?useSSL=true
     username: springboot
     password: ${DB_PASSWORD}
     hikari:
