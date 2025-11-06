@@ -3,7 +3,7 @@ name: Deploy Switch Manga API to Oracle Cloud
 on:
   push:
     branches: [ main, master ]
-  workflow_dispatch:
+  workflow_dispatch:  # 수동 실행 가능
 
 jobs:
   deploy:
@@ -24,25 +24,39 @@ jobs:
             echo "🚀 Starting Switch Manga API Deployment"
             echo "============================================"
             
+            # 프로젝트 디렉토리로 이동
             cd /home/ubuntu/switch-manga-api
             
+            # 현재 상태 확인
             echo "📍 Current directory: $(pwd)"
             echo "📂 Current branch: $(git branch --show-current)"
             
+            # 최신 코드 가져오기
             echo "📥 Pulling latest code from GitHub..."
             git fetch origin
             git reset --hard origin/main || git reset --hard origin/master
             
+            # Gradle 실행 권한 부여
             echo "🔧 Setting permissions..."
             chmod +x ./gradlew
             
+            # 기존 프로세스 종료
             echo "⏹️  Stopping old process..."
-            pkill -f 'switch-manga-api' || true
+            if [ -f ~/api.pid ]; then
+              PID=$(cat ~/api.pid)
+              echo "Found PID: $PID"
+              kill $PID 2>/dev/null || echo "Process already stopped"
+              rm ~/api.pid
+            else
+              echo "No PID file found, process might not be running"
+            fi
             sleep 3
             
+            # 빌드
             echo "🔨 Building project..."
             ./gradlew clean build -x test
             
+            # 빌드 결과 확인
             if [ -f "build/libs/switch-manga-api-0.0.1-SNAPSHOT.jar" ]; then
               echo "✅ Build successful!"
             else
@@ -50,12 +64,19 @@ jobs:
               exit 1
             fi
             
+            # 새 프로세스 시작 (백그라운드)
             echo "▶️  Starting new process..."
             nohup java -jar build/libs/switch-manga-api-0.0.1-SNAPSHOT.jar > ~/api.log 2>&1 &
+            echo $! > ~/api.pid
+            echo "Process started with PID: $(cat ~/api.pid)"
+            
+            # 또는 Gradle로 실행:
+            # nohup ./gradlew bootRun > ~/api.log 2>&1 &
             
             echo "⏳ Waiting for API to start..."
             sleep 10
             
+            # API 상태 확인
             echo "🔍 Checking API status..."
             if curl -f http://localhost:8081/api/v1/publishers > /dev/null 2>&1; then
               echo "✅ API is running successfully!"
