@@ -180,3 +180,5 @@ public void deletePublisher(User admin, Long publisherId) {
 **생성일**: 2025-10-25  
 **프로젝트**: Switch Manga API  
 **버전**: 1.0
+
+## 테스트 - 2025.11.07 23:00
