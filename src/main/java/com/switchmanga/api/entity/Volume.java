@@ -9,8 +9,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "volumes")
@@ -25,6 +23,14 @@ public class Volume {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "series_id", nullable = false)
+    @JsonIgnoreProperties({"volumes", "hibernateLazyInitializer"})
+    private Series series;
+
+    @Column(name = "volume_number", nullable = false)
+    private Integer volumeNumber;
+
     @Column(nullable = false, length = 200)
     private String title;
 
@@ -34,116 +40,62 @@ public class Volume {
     @Column(name = "title_jp", length = 200)
     private String titleJp;
 
-    @Column(name = "volume_number", nullable = false)
-    private Integer volumeNumber;
-
-    @Column(name = "cover_image", length = 500)
+    @Column(name = "cover_image", length = 255)
     private String coverImage;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "description_en", columnDefinition = "TEXT")
-    private String descriptionEn;
+    @Builder.Default  // ✅ 추가
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal price = BigDecimal.ZERO;
 
-    @Column(name = "description_jp", columnDefinition = "TEXT")
-    private String descriptionJp;
-
-    @Column(name = "publication_date")
-    private LocalDate publicationDate;
-
-    // 페이지 관련
-    @Column(name = "page_count")
-    private Integer pageCount;
-
-    @Column(name = "preview_pages")
-    private Integer previewPages;
-
-    // 연령/등급
-    @Column(name = "age_rating", length = 10)
-    private String ageRating;
-
-    // 무료 체험
-    @Column(name = "free_trial_days")
-    private Integer freeTrialDays;
-
-    @Column(precision = 10, scale = 2)
-    private BigDecimal price;
-
+    @Builder.Default  // ✅ 추가
     @Column(name = "discount_rate")
-    @Builder.Default
     private Integer discountRate = 0;
 
-    @Column(name = "isbn", length = 10)
+    @Builder.Default  // ✅ 추가
+    @Column(name = "total_pages")
+    private Integer totalPages = 0;
+
+    @Column(name = "file_size")
+    private Long fileSize;
+
+    @Column(name = "published_date")
+    private LocalDate publishedDate;
+
+    @Column(length = 20)
     private String isbn;
 
-    @Column(length = 100)
-    private String author;
-
-    @Column(name = "author_en", length = 100)
-    private String authorEn;
-
-    @Column(name = "author_jp", length = 100)
-    private String authorJp;
-
-    @Column(length = 100)
-    private String artist;
-
-    @Column(name = "artist_en", length = 100)
-    private String artistEn;
-
-    @Column(name = "artist_jp", length = 100)
-    private String artistJp;
-
-    @Column(name = "has_action")
-    @Builder.Default
-    private Boolean hasAction = false;
-
-    @Column(name = "avf_file_path", length = 500)
-    private String avfFilePath;
-
-    @Column(name = "pages_directory", length = 500)
-    private String pagesDirectory;
-
+    @Builder.Default  // ✅ 추가
     @Column(name = "is_free")
-    @Builder.Default
     private Boolean isFree = false;
 
+    @Builder.Default  // ✅ 추가
+    @Column(precision = 3, scale = 2)
+    private BigDecimal rating = BigDecimal.ZERO;
+
+    @Builder.Default  // ✅ 추가
+    @Column(name = "review_count")
+    private Integer reviewCount = 0;
+
+    @Builder.Default  // ✅ 추가
+    @Column(name = "purchase_count")
+    private Integer purchaseCount = 0;
+
+    @Builder.Default  // ✅ 추가
     @Column(name = "view_count")
-    @Builder.Default
-    private Long viewCount = 0L;
+    private Integer viewCount = 0;
 
-    @Column(name = "average_rating", precision = 3, scale = 2)
-    @Builder.Default
-    private BigDecimal averageRating = BigDecimal.ZERO;
-
+    @Builder.Default  // ✅ active 필드 추가
     @Column(nullable = false)
-    @Builder.Default
     private Boolean active = true;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    // 관계 설정
-    @JsonIgnoreProperties({"volumes", "publisher"})
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "series_id")
-    private Series series;
-
-    @OneToMany(mappedBy = "volume", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Page> pages = new ArrayList<>();
-
-    @OneToMany(mappedBy = "volume", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Review> reviews = new ArrayList<>();
-
-    @OneToMany(mappedBy = "volume", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<OrderItem> orderItems = new ArrayList<>();
 }

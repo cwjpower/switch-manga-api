@@ -1,63 +1,72 @@
 package com.switchmanga.api.dto.volume;
 
 import com.switchmanga.api.entity.Volume;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalDateTime;
 
-/**
- * 권(Volume) 목록 조회 응답 DTO
- * GET /api/v1/publishers/me/volumes
- */
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class VolumeListResponse {
 
     private Long id;
-    private Long seriesId;
-    private String seriesTitle;
-    
     private Integer volumeNumber;
     private String title;
     private String titleEn;
     private String titleJp;
-    
     private String coverImage;
-    
-    private Double price;
-    private String isbn;
-    private LocalDate publicationDate;
-    
-    private Integer pageCount;
-    private Boolean active;
-    
+    private BigDecimal price;
+    private Integer discountRate;
+    private Integer totalPages;
+    private LocalDate publishedDate;
+    private Boolean isFree;
+    private BigDecimal rating;
+    private Integer reviewCount;
+    private Integer purchaseCount;
+    private Integer viewCount;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+
+    // Series 정보
+    private Long seriesId;
+    private String seriesTitle;
 
     /**
-     * Entity → DTO 변환
+     * Volume Entity → VolumeListResponse 변환
      */
     public static VolumeListResponse from(Volume volume) {
         return VolumeListResponse.builder()
                 .id(volume.getId())
-                .seriesId(volume.getSeries() != null ? volume.getSeries().getId() : null)
-                .seriesTitle(volume.getSeries() != null ? volume.getSeries().getTitle() : null)
                 .volumeNumber(volume.getVolumeNumber())
                 .title(volume.getTitle())
                 .titleEn(volume.getTitleEn())
                 .titleJp(volume.getTitleJp())
                 .coverImage(volume.getCoverImage())
-                .price(volume.getPrice() != null ? volume.getPrice().doubleValue() : 0.0)
-                .isbn(volume.getIsbn())
-                .publicationDate(volume.getPublicationDate())
-                .pageCount(volume.getPageCount())
-                .active(volume.getActive())
+                .price(volume.getPrice())
+                .discountRate(volume.getDiscountRate())
+                .totalPages(volume.getTotalPages())
+                .publishedDate(volume.getPublishedDate())
+                .isFree(volume.getIsFree())
+                .rating(volume.getRating())
+                .reviewCount(volume.getReviewCount())
+                .purchaseCount(volume.getPurchaseCount())
+                .viewCount(volume.getViewCount())
                 .createdAt(volume.getCreatedAt())
-                .updatedAt(volume.getUpdatedAt())
+
+                // Series 정보
+                .seriesId(volume.getSeries() != null
+                        ? volume.getSeries().getId()
+                        : null)
+                .seriesTitle(volume.getSeries() != null
+                        ? volume.getSeries().getTitle()
+                        : null)
+
                 .build();
     }
 }

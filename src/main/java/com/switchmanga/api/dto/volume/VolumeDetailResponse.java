@@ -1,75 +1,101 @@
 package com.switchmanga.api.dto.volume;
 
 import com.switchmanga.api.entity.Volume;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-
-/**
- * 권(Volume) 상세 조회 응답 DTO
- * GET /api/v1/publishers/me/volumes/{id}
- */
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class VolumeDetailResponse {
 
     private Long id;
-    
-    private Long seriesId;
-    private String seriesTitle;
-    
-    private Long publisherId;
-    private String publisherName;
-    
     private Integer volumeNumber;
     private String title;
     private String titleEn;
     private String titleJp;
-    private String description;
-    
-    private Double price;
-    private String isbn;
-    private LocalDate publicationDate;
-    
     private String coverImage;
-    
-    // 파일 정보
-    private Integer pageCount;
-    
-    private Boolean active;
+    private String description;
+    private BigDecimal price;
+    private Integer discountRate;
+    private Integer totalPages;
+    private Long fileSize;
+    private LocalDate publishedDate;
+    private Boolean isFree;
+    private BigDecimal rating;
+    private Integer reviewCount;
+    private Integer purchaseCount;
+    private Integer viewCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    // Series 정보
+    private SeriesInfo series;
+
     /**
-     * Entity → DTO 변환
+     * Volume Entity → VolumeDetailResponse 변환
      */
     public static VolumeDetailResponse from(Volume volume) {
         return VolumeDetailResponse.builder()
                 .id(volume.getId())
-                .seriesId(volume.getSeries() != null ? volume.getSeries().getId() : null)
-                .seriesTitle(volume.getSeries() != null ? volume.getSeries().getTitle() : null)
-                .publisherId(volume.getSeries() != null && volume.getSeries().getPublisher() != null 
-                        ? volume.getSeries().getPublisher().getId() : null)
-                .publisherName(volume.getSeries() != null && volume.getSeries().getPublisher() != null 
-                        ? volume.getSeries().getPublisher().getName() : null)
                 .volumeNumber(volume.getVolumeNumber())
                 .title(volume.getTitle())
                 .titleEn(volume.getTitleEn())
                 .titleJp(volume.getTitleJp())
-                .description(volume.getDescription())
-                .price(volume.getPrice() != null ?
-                        volume.getPrice().doubleValue() : 0.0)
-                .isbn(volume.getIsbn())
-                .publicationDate(volume.getPublicationDate())
                 .coverImage(volume.getCoverImage())
-                .pageCount(volume.getPageCount())
-                .active(volume.getActive())
+                .description(volume.getDescription())
+                .price(volume.getPrice())
+                .discountRate(volume.getDiscountRate())
+                .totalPages(volume.getTotalPages())
+                .fileSize(volume.getFileSize())
+                .publishedDate(volume.getPublishedDate())
+                .isFree(volume.getIsFree())
+                .rating(volume.getRating())
+                .reviewCount(volume.getReviewCount())
+                .purchaseCount(volume.getPurchaseCount())
+                .viewCount(volume.getViewCount())
                 .createdAt(volume.getCreatedAt())
                 .updatedAt(volume.getUpdatedAt())
+
+                // Series 정보
+                .series(volume.getSeries() != null
+                        ? SeriesInfo.from(volume.getSeries())
+                        : null)
+
                 .build();
+    }
+
+    /**
+     * Series 간략 정보
+     */
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SeriesInfo {
+        private Long id;
+        private String title;
+        private String titleEn;
+        private String author;
+        private String coverImage;
+        private String status;
+
+        public static SeriesInfo from(com.switchmanga.api.entity.Series series) {
+            return SeriesInfo.builder()
+                    .id(series.getId())
+                    .title(series.getTitle())
+                    .titleEn(series.getTitleEn())
+                    .author(series.getAuthor())
+                    .coverImage(series.getCoverImage())
+                    .status(series.getStatus())
+                    .build();
+        }
     }
 }

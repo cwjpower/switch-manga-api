@@ -1,5 +1,7 @@
 package com.switchmanga.api.security;
 
+import com.switchmanga.api.entity.User;
+import com.switchmanga.api.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +26,7 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;  // ⭐ 추가!
 
     // ⭐ 필터를 건너뛸 경로 목록 (Public API만!)
     private static final List<String> EXCLUDED_PATHS = List.of(
@@ -39,16 +42,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        
+
         log.debug("=== JWT Filter Check ===");
         log.debug("Request URI: {}", path);
-        
+
         // ⭐ Admin 경로는 항상 필터 통과 (인증 필요!)
         if (path.contains("/admin")) {
             log.debug("Admin path detected - filter will process");
             return false;
         }
-        
+
         // ⭐ Public API는 필터 건너뛰기
         boolean shouldSkip = EXCLUDED_PATHS.stream().anyMatch(excluded -> {
             // 정확히 일치하거나, 숫자 ID가 뒤에 오는 경우만 건너뛰기
@@ -64,7 +67,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             return false;
         });
-        
+
         log.debug("Should skip filter: {}", shouldSkip);
         return shouldSkip;
     }
@@ -82,17 +85,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 log.debug("JWT validated for user: {} with role: {}", email, role);
 
+                // ⭐ User 객체 조회
+                User user = userRepository.findByEmail(email)
+                        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다: " + email));
+
+                log.debug("User found: id={}, email={}, role={}", user.getId(), user.getEmail(), user.getRole());
+
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
-                                email,
+                                user,  // ⭐ User 객체로 변경!
                                 null,
                                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
                         );
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                
-                log.debug("SecurityContext updated with authentication");
+
+                log.debug("SecurityContext updated with User authentication");
             } else {
                 log.debug("No valid JWT token found");
             }

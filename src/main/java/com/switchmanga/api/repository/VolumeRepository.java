@@ -1,9 +1,9 @@
 package com.switchmanga.api.repository;
 
 import com.switchmanga.api.entity.Volume;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,31 +12,34 @@ import java.util.Optional;
 @Repository
 public interface VolumeRepository extends JpaRepository<Volume, Long> {
 
-    // 시리즈별 Volume 조회
+    // Series ID로 조회
     List<Volume> findBySeriesId(Long seriesId);
 
-    // 시리즈별 Volume 조회 (권수 순서)
+    Page<Volume> findBySeriesId(Long seriesId, Pageable pageable);
+
     List<Volume> findBySeriesIdOrderByVolumeNumberAsc(Long seriesId);
 
-    // 시리즈 + 권수로 조회
-    Optional<Volume> findBySeriesIdAndVolumeNumber(Long seriesId, Integer volumeNumber);
+    // Series의 Publisher ID로 조회
+    Page<Volume> findBySeriesPublisherId(Long publisherId, Pageable pageable);
 
-    // 활성화된 Volume 조회
-    List<Volume> findByActiveTrue();
+    List<Volume> findBySeriesPublisherId(Long publisherId);
 
-    // 시리즈별 활성 Volume 조회
-    List<Volume> findBySeriesIdAndActiveTrue(Long seriesId);
-
-    // 제목으로 검색
-    List<Volume> findByTitleContainingIgnoreCase(String title);
-
-    // ISBN으로 조회
-    Optional<Volume> findByIsbn(String isbn);
-
-    // 시리즈별 Volume 개수
+    // 개수 조회
     Long countBySeriesId(Long seriesId);
 
-    // 출판사별 Volume 개수 (JOIN 사용)
-    @Query("SELECT COUNT(v) FROM Volume v WHERE v.series.publisher.id = :publisherId")
-    Long countByPublisherId(@Param("publisherId") Long publisherId);
+    Long countBySeriesPublisherId(Long publisherId);
+
+    // 특정 권 번호 조회
+    Optional<Volume> findBySeriesIdAndVolumeNumber(Long seriesId, Integer volumeNumber);
+
+    // 존재 여부 확인
+    boolean existsBySeriesIdAndVolumeNumber(Long seriesId, Integer volumeNumber);
+
+    // 제목 검색
+    List<Volume> findByTitleContainingIgnoreCase(String title);
+
+    Page<Volume> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+
+    // ISBN으로 검색
+    Optional<Volume> findByIsbn(String isbn);
 }

@@ -1,13 +1,10 @@
 package com.switchmanga.api.entity;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Page {
 
     @Id
@@ -24,23 +22,28 @@ public class Page {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "volume_id", nullable = false)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"pages", "hibernateLazyInitializer"})
     private Volume volume;
 
     @Column(name = "page_number", nullable = false)
     private Integer pageNumber;
 
-    @Column(name = "image_url", nullable = false, length = 500)
+    @Column(name = "image_url", nullable = false, length = 255)
     private String imageUrl;
 
-    @Column(name = "avf_data", columnDefinition = "TEXT")
-    private String avfData;  // 액션 뷰어 프레임 좌표 (JSON 형식)
+    @Column(name = "thumbnail_url", length = 255)
+    private String thumbnailUrl;
+
+    @Column
+    private Integer width;
+
+    @Column
+    private Integer height;
+
+    @Column(name = "file_size")
+    private Integer fileSize;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 }

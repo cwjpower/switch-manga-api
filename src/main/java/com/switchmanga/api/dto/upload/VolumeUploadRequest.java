@@ -1,48 +1,78 @@
 package com.switchmanga.api.dto.upload;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class VolumeUploadRequest {
 
-    // 기본 정보
-    private String title;           // 제목
-    private String titleEn;         // 영문 제목
-    private String titleJp;         // 일본어 제목
+    @NotNull(message = "시리즈 ID는 필수입니다")
+    private Long seriesId;
 
-    private String author;          // 저자
-    private String authorEn;        // 영문 저자
-    private String authorJp;        // 일본어 저자
+    @NotNull(message = "권 번호는 필수입니다")
+    @PositiveOrZero(message = "권 번호는 0 이상이어야 합니다")
+    private Integer volumeNumber;
 
-    // 가격 정보
-    private Double price;       // 정가
-    private Integer discountRate;   // 할인율 (0-100)
+    @NotBlank(message = "제목은 필수입니다")
+    private String title;
 
-    // 시리즈 정보
-    private Long seriesId;          // 시리즈 ID
-    private Integer volumeNumber;   // 권수
+    private String titleEn;
 
-    // 출판 정보
-    private String isbn;            // ISBN
-    private String publishedDate;   // 출판일 (YYYY-MM-DD)
+    private String titleJp;
 
-    // 설명
-    private String description;     // 설명
-    private String descriptionEn;   // 영문 설명
-    private String descriptionJp;   // 일본어 설명
+    private String author;
 
-    // 추가 설정
-    private Integer previewPages;   // 미리보기 페이지 수
-    private String ageRating;       // 연령 등급 (전체이용가, 15세, 19세)
-    private Integer freeTrialDays;  // 무료 체험 기간 (일)
+    private String authorEn;
 
-    // 상태
-    private Boolean isFree;         // 무료 여부
-    private Boolean hasAction;      // Action Viewer 지원 여부
+    private String authorJp;
+
+    private String description;
+
+    private String descriptionEn;
+
+    private String descriptionJp;
+
+    private String coverImage;
+
+    @PositiveOrZero(message = "가격은 0 이상이어야 합니다")
+    private Double price;
+
+    private Integer discountRate;
+
+    private String publishedDate;  // String으로 받고 Service에서 변환
+
+    private String isbn;
+
+    private Integer totalPages;
+
+    private Integer previewPages;
+
+    private String ageRating;
+
+    private Integer freeTrialDays;
+
+    private Boolean isFree;
+
+    private Boolean hasAction;
+
+    private Long fileSize;
+
+    // 추가 가능한 필드들
+    private String status;
+
+    private String language;
+
+    private String genre;
+
+    private String tags;
 }

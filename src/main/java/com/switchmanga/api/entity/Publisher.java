@@ -32,10 +32,10 @@ public class Publisher {
     @Column(name = "name_jp", length = 100)
     private String nameJp;
 
-    @Column(length = 500)
+    @Column(length = 255)
     private String logo;
 
-    @Column(length = 2)
+    @Column(nullable = false, length = 50)
     private String country;
 
     @Column(length = 100)
@@ -44,32 +44,26 @@ public class Publisher {
     @Column(length = 20)
     private String phone;
 
-    @Column(length = 200)
+    @Column(length = 255)
     private String website;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Builder.Default
+    @Builder.Default  // ✅ 추가
     @Column(nullable = false)
     private Boolean active = true;
 
+    @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"publisher", "hibernateLazyInitializer"})
+    @Builder.Default
+    private List<Series> seriesList = new ArrayList<>();
+
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    // 관계 설정
-    @JsonIgnoreProperties({"publisher", "volumes"})
-    @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<User> users = new ArrayList<>();
-
-    @JsonIgnoreProperties({"publisher", "volumes"})
-    @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Series> series = new ArrayList<>();
 }

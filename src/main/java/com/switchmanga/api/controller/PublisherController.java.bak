@@ -1,0 +1,227 @@
+package com.switchmanga.api.service;
+
+import com.switchmanga.api.dto.series.SeriesCreateRequest;
+import com.switchmanga.api.dto.series.SeriesUpdateRequest;
+import com.switchmanga.api.entity.Publisher;
+import com.switchmanga.api.entity.Series;
+import com.switchmanga.api.entity.Series.SeriesStatus;
+import com.switchmanga.api.entity.User;
+import com.switchmanga.api.repository.PublisherRepository;
+import com.switchmanga.api.repository.SeriesRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Publisher Service
+ * Publisher Portal 관련 비즈니스 로직
+ */
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class PublisherService {
+
+    private final PublisherRepository publisherRepository;
+    private final SeriesRepository seriesRepository;
+
+    // ========================================
+    // 📚 Series 관리
+    // ========================================
+
+    /**
+     * 내 Series 목록 조회
+     */
+    public Map<String, Object> getMySeries(User user, int page, int size, String keyword, String status) {
+        // User의 Publisher 찾기
+        Publisher publisher = getPublisherByUser(user);
+
+        // Pageable 생성
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        // 검색 조건에 따라 조회
+        Page<Series> seriesPage;
+
+        if (keyword != null && !keyword.isEmpty() && status != null && !status.isEmpty()) {
+            // 키워드 + 상태
+            seriesPage = seriesRepository.findByPublisherIdAndTitleContainingIgnoreCaseAndStatus(
+                    publisher.getId(), keyword, SeriesStatus.valueOf(status), pageable
+            );
+        } else if (keyword != null && !keyword.isEmpty()) {
+            // 키워드만
+            seriesPage = seriesRepository.findByPublisherIdAndTitleContainingIgnoreCase(
+                    publisher.getId(), keyword, pageable
+            );
+        } else if (status != null && !status.isEmpty()) {
+            // 상태만
+            seriesPage = seriesRepository.findByPublisherIdAndStatus(
+                    publisher.getId(), SeriesStatus.valueOf(status), pageable
+            );
+        } else {
+            // 전체
+            seriesPage = seriesRepository.findByPublisherId(publisher.getId(), pageable);
+        }
+
+        // 결과 매핑
+        Map<String, Object> result = new HashMap<>();
+        result.put("content", seriesPage.getContent());
+        result.put("page", seriesPage.getNumber());
+        result.put("size", seriesPage.getSize());
+        result.put("totalElements", seriesPage.getTotalElements());
+        result.put("totalPages", seriesPage.getTotalPages());
+
+        return result;
+    }
+
+    /**
+     * 새 Series 생성
+     */
+    @Transactional
+    public Series createSeries(User user, SeriesCreateRequest request, String coverImageUrl) {
+        // User의 Publisher 찾기
+        Publisher publisher = getPublisherByUser(user);
+
+        // Series 생성
+        Series series = new Series();
+        series.setPublisher(publisher);
+        series.setTitle(request.getTitle());
+        series.setTitleEn(request.getTitleEn());
+        series.setTitleJp(request.getTitleJp());
+        series.setAuthor(request.getAuthor());
+        series.setArtist(request.getArtist());
+        series.setDescription(request.getDescription());
+
+        // Status는 Enum으로 변환
+        series.setStatus(SeriesStatus.valueOf(request.getStatus()));
+
+        series.setCoverImage(coverImageUrl);
+
+        // 가격 정보 - BigDecimal로 변환
+        series.setPricingModel(request.getPricingModel());
+        series.setDefaultPrice(BigDecimal.valueOf(request.getDefaultPrice()));
+        series.setRentalPrice(BigDecimal.valueOf(request.getRentalPrice()));
+        series.setRentalDays(request.getRentalDays());
+        series.setSubscriptionPrice(BigDecimal.valueOf(request.getSubscriptionPrice()));
+        series.setFreeVolumes(request.getFreeVolumes());
+
+        series.setActive(true);
+        series.setCreatedAt(LocalDateTime.now());
+        series.setUpdatedAt(LocalDateTime.now());
+
+        return seriesRepository.save(series);
+    }
+
+    /**
+     * Series 상세 조회
+     */
+    public Series getMySeriesDetail(User user, Long seriesId) {
+        // User의 Publisher 찾기
+        Publisher publisher = getPublisherByUser(user);
+
+        // Series 조회
+        Series series = seriesRepository.findById(seriesId)
+                .orElseThrow(() -> new RuntimeException("시리즈를 찾을 수 없습니다"));
+
+        // 권한 확인 (내 Publisher의 Series인지)
+        if (!series.getPublisher().getId().equals(publisher.getId())) {
+            throw new RuntimeException("해당 시리즈에 접근 권한이 없습니다");
+        }
+
+        return series;
+    }
+
+    /**
+     * Series 수정
+     */
+    @Transactional
+    public Series updateSeries(User user, Long seriesId, SeriesUpdateRequest request, String coverImageUrl) {
+        // Series 조회 및 권한 확인
+        Series series = getMySeriesDetail(user, seriesId);
+
+        // 수정 (null이 아닌 값만)
+        if (request.getTitle() != null) {
+            series.setTitle(request.getTitle());
+        }
+        if (request.getTitleEn() != null) {
+            series.setTitleEn(request.getTitleEn());
+        }
+        if (request.getTitleJp() != null) {
+            series.setTitleJp(request.getTitleJp());
+        }
+        if (request.getAuthor() != null) {
+            series.setAuthor(request.getAuthor());
+        }
+        if (request.getArtist() != null) {
+            series.setArtist(request.getArtist());
+        }
+        if (request.getDescription() != null) {
+            series.setDescription(request.getDescription());
+        }
+        if (request.getStatus() != null) {
+            series.setStatus(SeriesStatus.valueOf(request.getStatus()));
+        }
+        if (coverImageUrl != null) {
+            series.setCoverImage(coverImageUrl);
+        }
+        if (request.getPricingModel() != null) {
+            series.setPricingModel(request.getPricingModel());
+        }
+        if (request.getDefaultPrice() != null) {
+            series.setDefaultPrice(BigDecimal.valueOf(request.getDefaultPrice()));
+        }
+        if (request.getRentalPrice() != null) {
+            series.setRentalPrice(BigDecimal.valueOf(request.getRentalPrice()));
+        }
+        if (request.getRentalDays() != null) {
+            series.setRentalDays(request.getRentalDays());
+        }
+        if (request.getSubscriptionPrice() != null) {
+            series.setSubscriptionPrice(BigDecimal.valueOf(request.getSubscriptionPrice()));
+        }
+        if (request.getFreeVolumes() != null) {
+            series.setFreeVolumes(request.getFreeVolumes());
+        }
+
+        series.setUpdatedAt(LocalDateTime.now());
+
+        return seriesRepository.save(series);
+    }
+
+    /**
+     * Series 삭제 (Soft Delete)
+     */
+    @Transactional
+    public void deleteSeries(User user, Long seriesId) {
+        // Series 조회 및 권한 확인
+        Series series = getMySeriesDetail(user, seriesId);
+
+        // Soft Delete
+        series.setActive(false);
+        series.setUpdatedAt(LocalDateTime.now());
+
+        seriesRepository.save(series);
+    }
+
+    // ========================================
+    // 🛠️ Helper Methods
+    // ========================================
+
+    /**
+     * User로부터 Publisher 찾기
+     */
+    private Publisher getPublisherByUser(User user) {
+        // TODO: User-Publisher 연결 테이블 구현 후 실제 로직으로 교체
+        // 현재는 임시로 user.getId()로 publisher 찾기
+
+        return publisherRepository.findById(user.getId())
+                .orElseThrow(() -> new RuntimeException("출판사 정보를 찾을 수 없습니다"));
+    }
+}

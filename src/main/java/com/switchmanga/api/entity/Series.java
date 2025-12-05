@@ -7,7 +7,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +24,14 @@ public class Series {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "publisher_id", nullable = false)
+    @JsonIgnoreProperties({"seriesList", "hibernateLazyInitializer"})
+    private Publisher publisher;
+
+    @Column(name = "category_id")
+    private Long categoryId;
+
     @Column(nullable = false, length = 200)
     private String title;
 
@@ -34,71 +41,45 @@ public class Series {
     @Column(name = "title_jp", length = 200)
     private String titleJp;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String author;
 
-    @Column(length = 100)
-    private String artist;
-
-    @Column(name = "cover_image", length = 500)
+    @Column(name = "cover_image", length = 255)
     private String coverImage;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Enumerated(EnumType.STRING)
+    @Builder.Default  // ✅ 추가
     @Column(length = 20)
-    private SeriesStatus status;
+    private String status = "ONGOING"; // ONGOING, COMPLETED, CANCELLED
 
-    @Column(name = "release_date")
-    private LocalDate releaseDate;
+    @Builder.Default  // ✅ 추가
+    @Column(name = "total_volumes")
+    private Integer totalVolumes = 0;
 
-    @Column(name = "view_count")
-    @Builder.Default
-    private Long viewCount = 0L;
+    @Builder.Default  // ✅ 추가
+    @Column(precision = 3, scale = 2)
+    private BigDecimal rating = BigDecimal.ZERO;
 
+    @Builder.Default  // ✅ 추가
     @Column(name = "review_count")
-    @Builder.Default
     private Integer reviewCount = 0;
 
-    @Column(name = "average_rating", precision = 3, scale = 2)
-    @Builder.Default
-    private BigDecimal averageRating = BigDecimal.ZERO;
+    @Builder.Default  // ✅ 추가
+    @Column(name = "view_count")
+    private Integer viewCount = 0;
 
-    @Column(nullable = false)
+    @OneToMany(mappedBy = "series", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"series", "hibernateLazyInitializer"})
     @Builder.Default
-    private Boolean active = true;
+    private List<Volume> volumes = new ArrayList<>();
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    // 관계 설정
-    @JsonIgnoreProperties({"series", "users"})
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "publisher_id")
-    private Publisher publisher;
-/*
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
-*/
-    @JsonIgnoreProperties({"series"})
-    @OneToMany(mappedBy = "series", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Volume> volumes = new ArrayList<>();
-
-    //@OneToMany(mappedBy = "series", cascade = CascadeType.ALL, orphanRemoval = true)
-    //@Builder.Default
-   // private List<Review> reviews = new ArrayList<>();
-
-    public enum SeriesStatus {
-        ONGOING,
-        COMPLETED,
-        HIATUS
-    }
 }

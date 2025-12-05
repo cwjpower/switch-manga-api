@@ -9,10 +9,18 @@ spring:
     database: mysql
     database-platform: org.hibernate.dialect.MariaDBDialect
     show-sql: true
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true  # ⭐ 추가!
     properties:
       hibernate:
         format_sql: true
         use_sql_comments: true
+
+  # SQL 초기화 설정 ⭐ 추가!
+  sql:
+    init:
+      mode: always
 
   # 파일 업로드
   servlet:
@@ -47,7 +55,7 @@ file:
     temp-dir: temp
 
 ---
-# 개발 환경 (Oracle Cloud)
+# 개발 환경 (local)
 spring:
   config:
     activate:
@@ -64,6 +72,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    defer-datasource-initialization: true  # ⭐ 추가!
+
+  sql:
+    init:
+      mode: always  # ⭐ 추가!
 
 # 파일 업로드 경로
 file:
@@ -81,7 +94,7 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://mariadb:3306/switchmanga?useSSL=true
+    url: jdbc:mariadb://mariadb:3306/switchmanga?useSSL=true  # herocomics → switchmanga
     username: springboot
     password: ${DB_PASSWORD}
     hikari:
@@ -91,6 +104,11 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: false
+    defer-datasource-initialization: true  # ⭐ 추가!
+
+  sql:
+    init:
+      mode: never  # 운영에서는 never!
 
 # 파일 업로드 경로
 file:

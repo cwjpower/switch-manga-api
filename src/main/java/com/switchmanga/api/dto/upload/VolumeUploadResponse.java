@@ -2,59 +2,50 @@ package com.switchmanga.api.dto.upload;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class VolumeUploadResponse {
 
-    private boolean success;
-
-    // Volume 정보
     private Long volumeId;
-    private String title;
-    private Integer volumeNumber;
-
-    // 업로드된 파일 정보
-    private String coverImagePath;
-    private String pagesDirectory;
-    private Integer pageCount;
-    private Boolean hasAvfFile;
-    private String avfFilePath;
-
-    // 시리즈 정보
     private Long seriesId;
-    private String seriesTitle;
+    private Integer volumeNumber;
+    private String title;
+    private Integer pageCount;
+    private String coverImage;
+    private String message;
 
-    // 에러 정보
+    // ✅ 추가 필드
+    private boolean success;
     private String errorMessage;
 
-    // 타임스탬프
-    private String uploadedAt;
+    // ✅ isSuccess() 메서드 - Lombok @Getter가 자동 생성하지만 명시적으로 추가
+    public boolean isSuccess() {
+        return success;
+    }
+
+    // ========================================
+    // 팩토리 메서드
+    // ========================================
 
     /**
      * 성공 응답 생성
      */
-    public static VolumeUploadResponse success(Long volumeId, String title, Integer volumeNumber,
-                                               String coverImagePath, String pagesDirectory,
-                                               Integer pageCount, Boolean hasAvfFile, String avfFilePath,
-                                               Long seriesId, String seriesTitle) {
+    public static VolumeUploadResponse success(Long volumeId, Long seriesId,
+                                               Integer volumeNumber, String title, Integer pageCount, String coverImage) {
         return VolumeUploadResponse.builder()
-                .success(true)
                 .volumeId(volumeId)
-                .title(title)
-                .volumeNumber(volumeNumber)
-                .coverImagePath(coverImagePath)
-                .pagesDirectory(pagesDirectory)
-                .pageCount(pageCount)
-                .hasAvfFile(hasAvfFile)
-                .avfFilePath(avfFilePath)
                 .seriesId(seriesId)
-                .seriesTitle(seriesTitle)
-                .uploadedAt(java.time.LocalDateTime.now().toString())
+                .volumeNumber(volumeNumber)
+                .title(title)
+                .pageCount(pageCount)
+                .coverImage(coverImage)
+                .message("볼륨 업로드 완료")
+                .success(true)
                 .build();
     }
 
@@ -65,7 +56,7 @@ public class VolumeUploadResponse {
         return VolumeUploadResponse.builder()
                 .success(false)
                 .errorMessage(errorMessage)
-                .uploadedAt(java.time.LocalDateTime.now().toString())
+                .message("볼륨 업로드 실패")
                 .build();
     }
 }
