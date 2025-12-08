@@ -170,11 +170,16 @@ public class PublisherPortalController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size,
             @RequestParam(required = false) Long seriesId,
+            @RequestParam(required = false) String search,    // ✅ 추가: 검색어 (제목, 시리즈명)
+            @RequestParam(required = false) String status,    // ✅ 추가: 상태 필터
+            @RequestParam(defaultValue = "desc") String sort, // ✅ 추가: 정렬 (desc/asc)
             Authentication authentication
     ) {
         try {
             User user = (User) authentication.getPrincipal();
-            Map<String, Object> result = publisherService.getMyVolumes(user, page, size, seriesId);
+            Map<String, Object> result = publisherService.getMyVolumes(
+                    user, page, size, seriesId, search, status, sort  // ✅ 파라미터 전달
+            );
 
             Map<String, Object> response = new HashMap<>();
             response.put("code", 0);

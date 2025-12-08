@@ -42,4 +42,44 @@ public interface VolumeRepository extends JpaRepository<Volume, Long> {
 
     // ISBN으로 검색
     Optional<Volume> findByIsbn(String isbn);
+
+    // ========================================
+    // ✅ 검색/필터 메서드 추가 (2025-12-08)
+    // ========================================
+
+    // 시리즈 내 제목 검색
+    Page<Volume> findBySeriesIdAndTitleContaining(Long seriesId, String title, Pageable pageable);
+
+    // 시리즈 내 상태 필터
+    Page<Volume> findBySeriesIdAndStatus(Long seriesId, String status, Pageable pageable);
+
+    // 시리즈 내 제목 검색 + 상태 필터
+    Page<Volume> findBySeriesIdAndTitleContainingAndStatus(
+            Long seriesId,
+            String title,
+            String status,
+            Pageable pageable
+    );
+
+    // 전체 제목 검색 (Publisher 기준)
+    Page<Volume> findBySeriesPublisherIdAndTitleContaining(
+            Long publisherId,
+            String title,
+            Pageable pageable
+    );
+
+    // 전체 상태 필터 (Publisher 기준)
+    Page<Volume> findBySeriesPublisherIdAndStatus(
+            Long publisherId,
+            String status,
+            Pageable pageable
+    );
+
+    // 전체 제목 검색 + 상태 필터 (Publisher 기준)
+    Page<Volume> findBySeriesPublisherIdAndTitleContainingAndStatus(
+            Long publisherId,
+            String title,
+            String status,
+            Pageable pageable
+    );
 }

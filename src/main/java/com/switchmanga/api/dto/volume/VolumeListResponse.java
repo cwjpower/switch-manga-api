@@ -21,6 +21,7 @@ public class VolumeListResponse {
     private String title;
     private String titleEn;
     private String titleJp;
+    private String description;  // ✅ 추가!
     private String coverImage;
     private BigDecimal price;
     private Integer discountRate;
@@ -50,6 +51,7 @@ public class VolumeListResponse {
                 .title(volume.getTitle())
                 .titleEn(volume.getTitleEn())
                 .titleJp(volume.getTitleJp())
+                .description(volume.getDescription())  // ✅ 추가!
                 .coverImage(volume.getCoverImage())
                 .price(volume.getPrice())
                 .discountRate(volume.getDiscountRate())

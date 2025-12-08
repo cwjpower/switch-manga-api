@@ -255,12 +255,26 @@ public class PublisherService {
     /**
      * 내 볼륨 목록 조회
      */
-    public Map<String, Object> getMyVolumes(User user, int page, int size, Long seriesId) {
+    public Map<String, Object> getMyVolumes(
+            User user,
+            int page,
+            int size,
+            Long seriesId,
+            String search,   // ✅ 추가: 검색어 (제목)
+            String status,   // ✅ 추가: 상태 필터
+            String sort      // ✅ 추가: 정렬 (desc/asc)
+    ) {
         Publisher publisher = getPublisherByUser(user);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        // ✅ 정렬 방향 결정
+        Sort.Direction sortDirection = "asc".equalsIgnoreCase(sort)
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "createdAt"));
 
         Page<Volume> volumePage;
 
+        // ✅ 검색/필터 조건에 따라 다른 쿼리 사용
         if (seriesId != null) {
             // 시리즈 권한 확인
             Series series = seriesRepository.findById(seriesId)
@@ -270,9 +284,39 @@ public class PublisherService {
                 throw new AccessDeniedException("이 시리즈에 대한 접근 권한이 없습니다.");
             }
 
-            volumePage = volumeRepository.findBySeriesId(seriesId, pageable);
+            // 시리즈 내 검색/필터
+            if (search != null && !search.isEmpty() && status != null && !status.isEmpty()) {
+                volumePage = volumeRepository.findBySeriesIdAndTitleContainingAndStatus(
+                        seriesId, search, status, pageable
+                );
+            } else if (search != null && !search.isEmpty()) {
+                volumePage = volumeRepository.findBySeriesIdAndTitleContaining(
+                        seriesId, search, pageable
+                );
+            } else if (status != null && !status.isEmpty()) {
+                volumePage = volumeRepository.findBySeriesIdAndStatus(
+                        seriesId, status, pageable
+                );
+            } else {
+                volumePage = volumeRepository.findBySeriesId(seriesId, pageable);
+            }
         } else {
-            volumePage = volumeRepository.findBySeriesPublisherId(publisher.getId(), pageable);
+            // 전체 볼륨 검색/필터
+            if (search != null && !search.isEmpty() && status != null && !status.isEmpty()) {
+                volumePage = volumeRepository.findBySeriesPublisherIdAndTitleContainingAndStatus(
+                        publisher.getId(), search, status, pageable
+                );
+            } else if (search != null && !search.isEmpty()) {
+                volumePage = volumeRepository.findBySeriesPublisherIdAndTitleContaining(
+                        publisher.getId(), search, pageable
+                );
+            } else if (status != null && !status.isEmpty()) {
+                volumePage = volumeRepository.findBySeriesPublisherIdAndStatus(
+                        publisher.getId(), status, pageable
+                );
+            } else {
+                volumePage = volumeRepository.findBySeriesPublisherId(publisher.getId(), pageable);
+            }
         }
 
         Map<String, Object> result = new HashMap<>();
