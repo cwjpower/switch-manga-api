@@ -53,9 +53,9 @@ public class SeriesDetailResponse {
                 .titleEn(series.getTitleEn())
                 .titleJp(series.getTitleJp())
                 .author(series.getAuthor())
-                .coverImage(series.getCoverImage())  // ✅ 대문자 I
+                .coverImage(series.getCoverImage())
                 .description(series.getDescription())
-                .status(series.getStatus())  // ✅ String 타입
+                .status(series.getStatus())
 
                 // ✅ 추가 필드들
                 .totalVolumes(series.getTotalVolumes())
@@ -119,10 +119,14 @@ public class SeriesDetailResponse {
         private Integer volumeNumber;
         private String title;
         private String coverImage;
+        private String description;  // ✅ 추가!
         private BigDecimal price;
         private Integer discountRate;
         private Integer totalPages;
         private Boolean isFree;
+        private String status;  // ✅ 추가!
+        private Integer freePages;  // ✅ 추가!
+        private String zipFile;  // ✅ ZIP 파일명
         private LocalDateTime createdAt;
 
         public static VolumeInfo from(Volume volume) {
@@ -131,10 +135,14 @@ public class SeriesDetailResponse {
                     .volumeNumber(volume.getVolumeNumber())
                     .title(volume.getTitle())
                     .coverImage(volume.getCoverImage())
+                    .description(volume.getDescription())  // ✅ 추가!
                     .price(volume.getPrice())
                     .discountRate(volume.getDiscountRate())
                     .totalPages(volume.getTotalPages())
                     .isFree(volume.getIsFree())
+                    .status(volume.getStatus())  // ✅ 추가!
+                    .freePages(volume.getFreePages())  // ✅ 추가!
+                    .zipFile(volume.getZipFile())  // ✅ ZIP 파일명
                     .createdAt(volume.getCreatedAt())
                     .build();
         }

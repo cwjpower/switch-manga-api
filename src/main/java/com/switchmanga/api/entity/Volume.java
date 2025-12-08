@@ -91,6 +91,20 @@ public class Volume {
     @Column(nullable = false)
     private Boolean active = true;
 
+    @Builder.Default  // ✅ status 필드 추가
+    @Column(length = 20)
+    private String status = "DRAFT";
+
+    @Builder.Default  // ✅ freePages 필드 추가
+    @Column(name = "free_pages")
+    private Integer freePages = 0;
+
+    @Column(name = "zip_file", length = 255)  // ✅ ZIP 파일명
+    private String zipFile;
+
+    @Column(name = "zip_file_path", length = 500)  // ✅ ZIP 파일 경로
+    private String zipFilePath;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

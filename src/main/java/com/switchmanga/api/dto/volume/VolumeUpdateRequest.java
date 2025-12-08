@@ -18,6 +18,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class VolumeUpdateRequest {
 
+    @PositiveOrZero(message = "권 번호는 0 이상이어야 합니다")
+    private Integer volumeNumber;
+
     @Size(max = 200, message = "제목은 200자 이내여야 합니다")
     private String title;
 
@@ -44,4 +47,16 @@ public class VolumeUpdateRequest {
     private LocalDate publishedDate;
 
     private Boolean isFree;
+
+    @Size(max = 20, message = "상태는 20자 이내여야 합니다")
+    private String status;
+
+    @PositiveOrZero(message = "무료 페이지 수는 0 이상이어야 합니다")
+    private Integer freePages;
+
+    @Size(max = 255, message = "ZIP 파일명은 255자 이내여야 합니다")
+    private String zipFile;
+
+    @Size(max = 500, message = "ZIP 파일 경로는 500자 이내여야 합니다")
+    private String zipFilePath;
 }

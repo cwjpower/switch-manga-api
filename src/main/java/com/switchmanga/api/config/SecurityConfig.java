@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/test").permitAll()
                         .requestMatchers("/api/v1/upload/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()  // ✅ 정적 파일!
                         .requestMatchers("/api/v1/auth/**").permitAll()
 
                         // Swagger UI
@@ -47,38 +48,38 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui.html").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/swagger-resources/**").permitAll()
-                        
+
                         // Publisher Public API
                         .requestMatchers("/api/v1/publishers").permitAll()
                         .requestMatchers("/api/v1/publishers/{id}").permitAll()
-                        
+
                         // Series Public API
                         .requestMatchers("/api/v1/series").permitAll()
                         .requestMatchers("/api/v1/series/{id}").permitAll()
                         .requestMatchers("/api/v1/series/{id}/volumes").permitAll()
-                        
+
                         // Volume Public API
                         .requestMatchers("/api/v1/volumes").permitAll()
                         .requestMatchers("/api/v1/volumes/{id}").permitAll()
-                        
+
                         // ========================================
                         // 2. Publisher Portal API (인증 필요) ✅
                         // ========================================
                         .requestMatchers("/api/v1/publishers/me/**").authenticated()
-                        
+
                         // ========================================
                         // 3. Admin API (인증 필요)
                         // ========================================
                         .requestMatchers("/api/v1/publishers/admin/**").authenticated()
                         .requestMatchers("/api/v1/admin/**").authenticated()
-                        
+
                         // ========================================
                         // 4. 나머지 모든 요청 (인증 필요)
                         // ========================================
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        
+
         return http.build();
     }
 
@@ -99,7 +100,7 @@ public class SecurityConfig {
         ));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

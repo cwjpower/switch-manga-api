@@ -17,8 +17,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.io.InputStream;
+import java.util.Enumeration;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 
 @Slf4j
 @Service
@@ -241,43 +243,87 @@ public class FileUploadService {
     }
 
     /**
-     * ZIP 파일 압축 해제
+     * ZIP 파일 압축 해제 (한글/일본어 파일명 지원)
      */
     private List<String> extractZipFile(Path zipPath, Path extractDir) throws IOException {
         List<String> extractedFiles = new ArrayList<>();
 
-        try (ZipFile zipFile = new ZipFile(zipPath.toFile())) {
+        // ✅ Apache Commons Compress ZipFile 사용 (UTF-8, EUC-KR, CP949 등 자동 처리)
+        try (ZipFile zipFile = new ZipFile(zipPath.toFile(), "UTF-8")) {
 
-            // ZipEntry를 Stream으로 처리
-            zipFile.stream()
-                    .sorted(Comparator.comparing(ZipEntry::getName))
-                    .forEach(entry -> {
-                        try {
-                            Path targetPath = extractDir.resolve(entry.getName());
+            Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
 
-                            if (entry.isDirectory()) {
-                                // 디렉토리 생성
-                                Files.createDirectories(targetPath);
-                            } else {
-                                // 부모 디렉토리 생성
-                                Files.createDirectories(targetPath.getParent());
+            while (entries.hasMoreElements()) {
+                ZipArchiveEntry entry = entries.nextElement();
 
-                                // 파일 추출
+                try {
+                    // 파일 경로 정리 (Windows 경로 분리자 처리)
+                    String entryName = entry.getName().replace("\\", "/");
+                    Path targetPath = extractDir.resolve(entryName);
+
+                    if (entry.isDirectory()) {
+                        // 디렉토리 생성
+                        Files.createDirectories(targetPath);
+                    } else {
+                        // 부모 디렉토리 생성
+                        Files.createDirectories(targetPath.getParent());
+
+                        // 파일 추출
+                        try (InputStream inputStream = zipFile.getInputStream(entry)) {
+                            Files.copy(
+                                    inputStream,
+                                    targetPath,
+                                    StandardCopyOption.REPLACE_EXISTING
+                            );
+                        }
+
+                        extractedFiles.add(entryName);
+                        log.debug("Extracted: {}", entryName);
+                    }
+
+                } catch (IOException e) {
+                    log.error("Failed to extract: {}", entry.getName(), e);
+                    throw new RuntimeException("압축 해제 실패: " + entry.getName(), e);
+                }
+            }
+
+        } catch (IOException e) {
+            // UTF-8 실패 시 EUC-KR 시도
+            log.warn("UTF-8 extraction failed, trying EUC-KR encoding...");
+            try (ZipFile zipFile = new ZipFile(zipPath.toFile(), "EUC-KR")) {
+
+                Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+
+                while (entries.hasMoreElements()) {
+                    ZipArchiveEntry entry = entries.nextElement();
+
+                    try {
+                        String entryName = entry.getName().replace("\\", "/");
+                        Path targetPath = extractDir.resolve(entryName);
+
+                        if (entry.isDirectory()) {
+                            Files.createDirectories(targetPath);
+                        } else {
+                            Files.createDirectories(targetPath.getParent());
+
+                            try (InputStream inputStream = zipFile.getInputStream(entry)) {
                                 Files.copy(
-                                        zipFile.getInputStream(entry),
+                                        inputStream,
                                         targetPath,
                                         StandardCopyOption.REPLACE_EXISTING
                                 );
-
-                                extractedFiles.add(entry.getName());
-                                log.debug("Extracted: {}", entry.getName());
                             }
 
-                        } catch (IOException e) {
-                            log.error("Failed to extract: {}", entry.getName(), e);
-                            throw new RuntimeException("압축 해제 실패: " + entry.getName(), e);
+                            extractedFiles.add(entryName);
+                            log.debug("Extracted (EUC-KR): {}", entryName);
                         }
-                    });
+
+                    } catch (IOException ex) {
+                        log.error("Failed to extract: {}", entry.getName(), ex);
+                        throw new RuntimeException("압축 해제 실패: " + entry.getName(), ex);
+                    }
+                }
+            }
         }
 
         return extractedFiles;

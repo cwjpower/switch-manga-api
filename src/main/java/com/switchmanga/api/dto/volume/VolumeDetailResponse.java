@@ -29,6 +29,10 @@ public class VolumeDetailResponse {
     private Long fileSize;
     private LocalDate publishedDate;
     private Boolean isFree;
+    private String status;  // ✅ 추가!
+    private Integer freePages;  // ✅ 추가!
+    private String zipFile;  // ✅ ZIP 파일명
+    private String zipFilePath;  // ✅ ZIP 파일 경로
     private BigDecimal rating;
     private Integer reviewCount;
     private Integer purchaseCount;
@@ -57,6 +61,10 @@ public class VolumeDetailResponse {
                 .fileSize(volume.getFileSize())
                 .publishedDate(volume.getPublishedDate())
                 .isFree(volume.getIsFree())
+                .status(volume.getStatus())  // ✅ 추가!
+                .freePages(volume.getFreePages())  // ✅ 추가!
+                .zipFile(volume.getZipFile())  // ✅ ZIP 파일명
+                .zipFilePath(volume.getZipFilePath())  // ✅ ZIP 파일 경로
                 .rating(volume.getRating())
                 .reviewCount(volume.getReviewCount())
                 .purchaseCount(volume.getPurchaseCount())

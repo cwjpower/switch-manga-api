@@ -78,10 +78,10 @@ spring:
     init:
       mode: always  # ⭐ 추가!
 
-# 파일 업로드 경로
+# 파일 업로드 경로 ✅ Windows 경로로 변경!
 file:
   upload:
-    base-dir: /home/ubuntu/uploads
+    base-dir: D:/Again_E-Book/switch-manga-api/uploads
     books-dir: books
     temp-dir: temp
 

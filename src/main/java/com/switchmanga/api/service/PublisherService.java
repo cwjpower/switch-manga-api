@@ -121,7 +121,13 @@ public class PublisherService {
 
         Map<String, Object> result = new HashMap<>();
         result.put("content", seriesPage.getContent().stream()
-                .map(SeriesListResponse::from)
+                .map(series -> {
+                    SeriesListResponse response = SeriesListResponse.from(series);
+                    // ✅ Volume 개수 계산!
+                    int volumeCount = volumeRepository.countBySeriesId(series.getId()).intValue();
+                    response.setVolumeCount(volumeCount);
+                    return response;
+                })
                 .collect(Collectors.toList()));
         result.put("page", seriesPage.getNumber());
         result.put("size", seriesPage.getSize());
@@ -326,6 +332,10 @@ public class PublisherService {
         volume.setTotalPages(request.getTotalPages());
         volume.setPublishedDate(request.getPublishedDate());
         volume.setIsFree(request.getIsFree() != null ? request.getIsFree() : false);
+        volume.setStatus(request.getStatus() != null ? request.getStatus() : "DRAFT");
+        volume.setFreePages(request.getFreePages() != null ? request.getFreePages() : 0);
+        volume.setZipFile(request.getZipFile());  // ✅ ZIP 파일명
+        volume.setZipFilePath(request.getZipFilePath());  // ✅ ZIP 파일 경로
 
         Volume saved = volumeRepository.save(volume);
 
@@ -351,6 +361,9 @@ public class PublisherService {
         }
 
         // 필드 업데이트
+        if (request.getVolumeNumber() != null) {
+            volume.setVolumeNumber(request.getVolumeNumber());
+        }
         if (request.getTitle() != null) {
             volume.setTitle(request.getTitle());
         }
@@ -380,6 +393,18 @@ public class PublisherService {
         }
         if (request.getIsFree() != null) {
             volume.setIsFree(request.getIsFree());
+        }
+        if (request.getStatus() != null) {
+            volume.setStatus(request.getStatus());
+        }
+        if (request.getFreePages() != null) {
+            volume.setFreePages(request.getFreePages());
+        }
+        if (request.getZipFile() != null) {
+            volume.setZipFile(request.getZipFile());
+        }
+        if (request.getZipFilePath() != null) {
+            volume.setZipFilePath(request.getZipFilePath());
         }
 
         return volumeRepository.save(volume);
