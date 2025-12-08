@@ -31,7 +31,7 @@ public class SeriesDetailResponse {
     private Integer totalVolumes;
     private BigDecimal rating;
     private Integer reviewCount;
-    private Integer viewCount;
+    private Long viewCount;
     private Long categoryId;
 
     private LocalDateTime createdAt;

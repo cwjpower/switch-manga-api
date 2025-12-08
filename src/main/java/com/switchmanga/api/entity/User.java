@@ -52,6 +52,10 @@ public class User {
     @Column(name = "email_verified")
     private Boolean emailVerified = false;
 
+    // ✅ 추가: publisherId 직접 접근용 (Lazy Loading 문제 해결)
+    @Column(name = "publisher_id", insertable = false, updatable = false)
+    private Long publisherId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publisher_id")
     private Publisher publisher;

@@ -11,19 +11,19 @@ import java.util.List;
 @Repository
 public interface SeriesRepository extends JpaRepository<Series, Long> {
 
-    // Publisher ID로 조회
-    Page<Series> findByPublisherId(Long publisherId, Pageable pageable);
+    // Publisher ID로 조회 ✅ 수정: PublisherId → Publisher_Id
+    Page<Series> findByPublisher_Id(Long publisherId, Pageable pageable);
 
-    List<Series> findByPublisherId(Long publisherId);
+    List<Series> findByPublisher_Id(Long publisherId);
 
-    // Publisher ID + Status로 조회
-    Page<Series> findByPublisherIdAndStatus(Long publisherId, String status, Pageable pageable);
+    // Publisher ID + Status로 조회 ✅ 수정
+    Page<Series> findByPublisher_IdAndStatus(Long publisherId, String status, Pageable pageable);
 
-    // Publisher ID + 제목 검색
-    Page<Series> findByPublisherIdAndTitleContainingIgnoreCase(Long publisherId, String title, Pageable pageable);
+    // Publisher ID + 제목 검색 ✅ 수정
+    Page<Series> findByPublisher_IdAndTitleContainingIgnoreCase(Long publisherId, String title, Pageable pageable);
 
-    // Publisher ID로 개수 조회
-    Long countByPublisherId(Long publisherId);
+    // Publisher ID로 개수 조회 ✅ 수정
+    Long countByPublisher_Id(Long publisherId);
 
     // 제목으로 검색
     List<Series> findByTitleContainingIgnoreCase(String title);

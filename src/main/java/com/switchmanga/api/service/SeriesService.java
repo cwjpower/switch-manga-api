@@ -44,7 +44,8 @@ public class SeriesService {
      * 출판사별 시리즈 목록 조회
      */
     public List<Series> getSeriesByPublisher(Long publisherId) {
-        return seriesRepository.findByPublisherId(publisherId);
+        // ✅ 수정: findByPublisherId → findByPublisher_Id
+        return seriesRepository.findByPublisher_Id(publisherId);
     }
 
     /**
@@ -161,6 +162,7 @@ public class SeriesService {
      * 출판사별 시리즈 개수 조회
      */
     public Long countByPublisherId(Long publisherId) {
-        return seriesRepository.countByPublisherId(publisherId);
+        // ✅ 수정: countByPublisherId → countByPublisher_Id
+        return seriesRepository.countByPublisher_Id(publisherId);
     }
 }

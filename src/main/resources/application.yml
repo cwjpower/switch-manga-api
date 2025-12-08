@@ -1,5 +1,3 @@
----
-# 공통 설정
 spring:
   application:
     name: Switch Manga API
@@ -10,17 +8,17 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
     show-sql: true
     hibernate:
-      ddl-auto: update
-    defer-datasource-initialization: true  # ⭐ 추가!
+      ddl-auto: validate    # ✅ update → validate 변경!
+    defer-datasource-initialization: false
     properties:
       hibernate:
         format_sql: true
         use_sql_comments: true
 
-  # SQL 초기화 설정 ⭐ 추가!
+  # SQL 초기화 설정
   sql:
     init:
-      mode: always
+      mode: never
 
   # 파일 업로드
   servlet:
@@ -29,7 +27,7 @@ spring:
       max-file-size: 1024MB
       max-request-size: 1024MB
 
-  # 기본 DB 설정 (프로파일 없을 때 사용)
+  # 기본 DB 설정
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:33060/switchmanga?allowPublicKeyRetrieval=true&useSSL=false
@@ -71,22 +69,21 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
-    defer-datasource-initialization: true  # ⭐ 추가!
+      ddl-auto: validate    # ✅ update → validate 변경!
+    defer-datasource-initialization: false
 
   sql:
     init:
-      mode: always  # ⭐ 추가!
+      mode: never
 
-# 파일 업로드 경로 ✅ Windows 경로로 변경!
 file:
   upload:
-    base-dir: D:/Again_E-Book/switch-manga-api/uploads
+    base-dir: /home/ubuntu/uploads
     books-dir: books
     temp-dir: temp
 
 ---
-# 운영 환경 (GCP)
+# 운영 환경 (prod)
 spring:
   config:
     activate:
@@ -94,7 +91,7 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://mariadb:3306/switchmanga?useSSL=true  # herocomics → switchmanga
+    url: jdbc:mariadb://mariadb:3306/switchmanga?useSSL=true
     username: springboot
     password: ${DB_PASSWORD}
     hikari:
@@ -102,15 +99,14 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: validate    # ✅ update → validate 변경!
     show-sql: false
-    defer-datasource-initialization: true  # ⭐ 추가!
+    defer-datasource-initialization: false
 
   sql:
     init:
-      mode: never  # 운영에서는 never!
+      mode: never
 
-# 파일 업로드 경로
 file:
   upload:
     base-dir: /var/uploads

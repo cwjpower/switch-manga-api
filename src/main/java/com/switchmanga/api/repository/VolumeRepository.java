@@ -19,15 +19,15 @@ public interface VolumeRepository extends JpaRepository<Volume, Long> {
 
     List<Volume> findBySeriesIdOrderByVolumeNumberAsc(Long seriesId);
 
-    // Series의 Publisher ID로 조회
-    Page<Volume> findBySeriesPublisherId(Long publisherId, Pageable pageable);
+    // Series의 Publisher ID로 조회 ✅ 수정: SeriesPublisherId → Series_Publisher_Id
+    Page<Volume> findBySeries_Publisher_Id(Long publisherId, Pageable pageable);
 
-    List<Volume> findBySeriesPublisherId(Long publisherId);
+    List<Volume> findBySeries_Publisher_Id(Long publisherId);
 
     // 개수 조회
     Long countBySeriesId(Long seriesId);
 
-    Long countBySeriesPublisherId(Long publisherId);
+    Long countBySeries_Publisher_Id(Long publisherId);  // ✅ 수정
 
     // 특정 권 번호 조회
     Optional<Volume> findBySeriesIdAndVolumeNumber(Long seriesId, Integer volumeNumber);
@@ -44,7 +44,7 @@ public interface VolumeRepository extends JpaRepository<Volume, Long> {
     Optional<Volume> findByIsbn(String isbn);
 
     // ========================================
-    // ✅ 검색/필터 메서드 추가 (2025-12-08)
+    // ✅ 검색/필터 메서드 (수정됨)
     // ========================================
 
     // 시리즈 내 제목 검색
@@ -61,22 +61,22 @@ public interface VolumeRepository extends JpaRepository<Volume, Long> {
             Pageable pageable
     );
 
-    // 전체 제목 검색 (Publisher 기준)
-    Page<Volume> findBySeriesPublisherIdAndTitleContaining(
+    // 전체 제목 검색 (Publisher 기준) ✅ 수정
+    Page<Volume> findBySeries_Publisher_IdAndTitleContaining(
             Long publisherId,
             String title,
             Pageable pageable
     );
 
-    // 전체 상태 필터 (Publisher 기준)
-    Page<Volume> findBySeriesPublisherIdAndStatus(
+    // 전체 상태 필터 (Publisher 기준) ✅ 수정
+    Page<Volume> findBySeries_Publisher_IdAndStatus(
             Long publisherId,
             String status,
             Pageable pageable
     );
 
-    // 전체 제목 검색 + 상태 필터 (Publisher 기준)
-    Page<Volume> findBySeriesPublisherIdAndTitleContainingAndStatus(
+    // 전체 제목 검색 + 상태 필터 (Publisher 기준) ✅ 수정
+    Page<Volume> findBySeries_Publisher_IdAndTitleContainingAndStatus(
             Long publisherId,
             String title,
             String status,

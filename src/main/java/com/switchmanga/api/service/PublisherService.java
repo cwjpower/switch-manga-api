@@ -34,64 +34,39 @@ public class PublisherService {
     // Publisher 관련 메서드
     // ========================================
 
-    /**
-     * 내 출판사 정보 조회
-     */
     public PublisherInfoResponse getMyInfo(User user) {
         Publisher publisher = getPublisherByUser(user);
         return PublisherInfoResponse.from(publisher);
     }
 
-    /**
-     * 출판사 정보 수정
-     */
     @Transactional
     public PublisherInfoResponse updateMyInfo(User user, PublisherUpdateRequest request) {
         Publisher publisher = getPublisherByUser(user);
 
-        if (request.getName() != null) {
-            publisher.setName(request.getName());
-        }
-        if (request.getNameEn() != null) {
-            publisher.setNameEn(request.getNameEn());
-        }
-        if (request.getNameJp() != null) {
-            publisher.setNameJp(request.getNameJp());
-        }
-        if (request.getLogo() != null) {
-            publisher.setLogo(request.getLogo());
-        }
-        if (request.getEmail() != null) {
-            publisher.setEmail(request.getEmail());
-        }
-        if (request.getPhone() != null) {
-            publisher.setPhone(request.getPhone());
-        }
-        if (request.getWebsite() != null) {
-            publisher.setWebsite(request.getWebsite());
-        }
-        if (request.getDescription() != null) {
-            publisher.setDescription(request.getDescription());
-        }
+        if (request.getName() != null) publisher.setName(request.getName());
+        if (request.getNameEn() != null) publisher.setNameEn(request.getNameEn());
+        if (request.getNameJp() != null) publisher.setNameJp(request.getNameJp());
+        if (request.getLogo() != null) publisher.setLogo(request.getLogo());
+        if (request.getEmail() != null) publisher.setEmail(request.getEmail());
+        if (request.getPhone() != null) publisher.setPhone(request.getPhone());
+        if (request.getWebsite() != null) publisher.setWebsite(request.getWebsite());
+        if (request.getDescription() != null) publisher.setDescription(request.getDescription());
 
         Publisher saved = publisherRepository.save(publisher);
         return PublisherInfoResponse.from(saved);
     }
 
-    /**
-     * 출판사 통계 조회
-     */
     public PublisherStatsResponse getMyStats(User user) {
         Publisher publisher = getPublisherByUser(user);
         Long publisherId = publisher.getId();
 
-        long totalSeries = seriesRepository.countByPublisherId(publisherId);
-        long totalVolumes = volumeRepository.countBySeriesPublisherId(publisherId);
+        long totalSeries = seriesRepository.countByPublisher_Id(publisherId);
+        long totalVolumes = volumeRepository.countBySeries_Publisher_Id(publisherId);
 
         return PublisherStatsResponse.builder()
                 .totalSeries(totalSeries)
                 .totalVolumes(totalVolumes)
-                .totalRevenue(0.0)  // ✅ Double 타입으로 수정
+                .totalRevenue(0.0)
                 .totalOrders(0L)
                 .build();
     }
@@ -100,9 +75,6 @@ public class PublisherService {
     // Series 관련 메서드
     // ========================================
 
-    /**
-     * 내 시리즈 목록 조회
-     */
     public Map<String, Object> getMySeries(User user, int page, int size, String status, String search) {
         Publisher publisher = getPublisherByUser(user);
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
@@ -110,20 +82,19 @@ public class PublisherService {
         Page<Series> seriesPage;
 
         if (search != null && !search.isEmpty()) {
-            seriesPage = seriesRepository.findByPublisherIdAndTitleContainingIgnoreCase(
+            seriesPage = seriesRepository.findByPublisher_IdAndTitleContainingIgnoreCase(
                     publisher.getId(), search, pageable);
         } else if (status != null && !status.isEmpty()) {
-            seriesPage = seriesRepository.findByPublisherIdAndStatus(
+            seriesPage = seriesRepository.findByPublisher_IdAndStatus(
                     publisher.getId(), status, pageable);
         } else {
-            seriesPage = seriesRepository.findByPublisherId(publisher.getId(), pageable);
+            seriesPage = seriesRepository.findByPublisher_Id(publisher.getId(), pageable);
         }
 
         Map<String, Object> result = new HashMap<>();
         result.put("content", seriesPage.getContent().stream()
                 .map(series -> {
                     SeriesListResponse response = SeriesListResponse.from(series);
-                    // ✅ Volume 개수 계산!
                     int volumeCount = volumeRepository.countBySeriesId(series.getId()).intValue();
                     response.setVolumeCount(volumeCount);
                     return response;
@@ -137,16 +108,12 @@ public class PublisherService {
         return result;
     }
 
-    /**
-     * 시리즈 상세 조회
-     */
     public SeriesDetailResponse getMySeriesDetail(User user, Long seriesId) {
         Publisher publisher = getPublisherByUser(user);
 
         Series series = seriesRepository.findById(seriesId)
                 .orElseThrow(() -> new IllegalArgumentException("시리즈를 찾을 수 없습니다: " + seriesId));
 
-        // 권한 확인
         if (!series.getPublisher().getId().equals(publisher.getId())) {
             throw new AccessDeniedException("이 시리즈에 대한 접근 권한이 없습니다.");
         }
@@ -154,9 +121,6 @@ public class PublisherService {
         return SeriesDetailResponse.from(series);
     }
 
-    /**
-     * 시리즈 생성
-     */
     @Transactional
     public Series createSeries(User user, SeriesCreateRequest request) {
         Publisher publisher = getPublisherByUser(user);
@@ -170,14 +134,12 @@ public class PublisherService {
         series.setDescription(request.getDescription());
         series.setCoverImage(request.getCoverImage());
 
-        // status는 String 타입 그대로 사용
         if (request.getStatus() != null) {
             series.setStatus(request.getStatus());
         } else {
             series.setStatus("ONGOING");
         }
 
-        // categoryId 설정 (있으면)
         if (request.getCategoryId() != null) {
             series.setCategoryId(request.getCategoryId());
         }
@@ -185,9 +147,6 @@ public class PublisherService {
         return seriesRepository.save(series);
     }
 
-    /**
-     * 시리즈 수정
-     */
     @Transactional
     public Series updateSeries(User user, Long seriesId, SeriesUpdateRequest request) {
         Publisher publisher = getPublisherByUser(user);
@@ -195,44 +154,22 @@ public class PublisherService {
         Series series = seriesRepository.findById(seriesId)
                 .orElseThrow(() -> new IllegalArgumentException("시리즈를 찾을 수 없습니다: " + seriesId));
 
-        // 권한 확인
         if (!series.getPublisher().getId().equals(publisher.getId())) {
             throw new AccessDeniedException("이 시리즈에 대한 수정 권한이 없습니다.");
         }
 
-        // 필드 업데이트
-        if (request.getTitle() != null) {
-            series.setTitle(request.getTitle());
-        }
-        if (request.getTitleEn() != null) {
-            series.setTitleEn(request.getTitleEn());
-        }
-        if (request.getTitleJp() != null) {
-            series.setTitleJp(request.getTitleJp());
-        }
-        if (request.getAuthor() != null) {
-            series.setAuthor(request.getAuthor());
-        }
-        if (request.getDescription() != null) {
-            series.setDescription(request.getDescription());
-        }
-        if (request.getCoverImage() != null) {
-            series.setCoverImage(request.getCoverImage());
-        }
-        // status는 String 타입 그대로 사용
-        if (request.getStatus() != null) {
-            series.setStatus(request.getStatus());
-        }
-        if (request.getCategoryId() != null) {
-            series.setCategoryId(request.getCategoryId());
-        }
+        if (request.getTitle() != null) series.setTitle(request.getTitle());
+        if (request.getTitleEn() != null) series.setTitleEn(request.getTitleEn());
+        if (request.getTitleJp() != null) series.setTitleJp(request.getTitleJp());
+        if (request.getAuthor() != null) series.setAuthor(request.getAuthor());
+        if (request.getDescription() != null) series.setDescription(request.getDescription());
+        if (request.getCoverImage() != null) series.setCoverImage(request.getCoverImage());
+        if (request.getStatus() != null) series.setStatus(request.getStatus());
+        if (request.getCategoryId() != null) series.setCategoryId(request.getCategoryId());
 
         return seriesRepository.save(series);
     }
 
-    /**
-     * 시리즈 삭제
-     */
     @Transactional
     public void deleteSeries(User user, Long seriesId) {
         Publisher publisher = getPublisherByUser(user);
@@ -240,7 +177,6 @@ public class PublisherService {
         Series series = seriesRepository.findById(seriesId)
                 .orElseThrow(() -> new IllegalArgumentException("시리즈를 찾을 수 없습니다: " + seriesId));
 
-        // 권한 확인
         if (!series.getPublisher().getId().equals(publisher.getId())) {
             throw new AccessDeniedException("이 시리즈에 대한 삭제 권한이 없습니다.");
         }
@@ -253,30 +189,20 @@ public class PublisherService {
     // ========================================
 
     /**
-     * 내 볼륨 목록 조회
+     * 볼륨 목록 조회
+     * ✅ Controller와 파라미터 순서 일치: user, page, size, seriesId, search, status, sort
      */
-    public Map<String, Object> getMyVolumes(
-            User user,
-            int page,
-            int size,
-            Long seriesId,
-            String search,   // ✅ 추가: 검색어 (제목)
-            String status,   // ✅ 추가: 상태 필터
-            String sort      // ✅ 추가: 정렬 (desc/asc)
-    ) {
+    public Map<String, Object> getMyVolumes(User user, int page, int size, Long seriesId,
+                                            String search, String status, String sort) {
         Publisher publisher = getPublisherByUser(user);
 
-        // ✅ 정렬 방향 결정
-        Sort.Direction sortDirection = "asc".equalsIgnoreCase(sort)
-                ? Sort.Direction.ASC
-                : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "createdAt"));
+        // sort 파라미터에 따라 정렬 방향 결정
+        Sort.Direction direction = "asc".equalsIgnoreCase(sort) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "volumeNumber"));
 
         Page<Volume> volumePage;
 
-        // ✅ 검색/필터 조건에 따라 다른 쿼리 사용
         if (seriesId != null) {
-            // 시리즈 권한 확인
             Series series = seriesRepository.findById(seriesId)
                     .orElseThrow(() -> new IllegalArgumentException("시리즈를 찾을 수 없습니다: " + seriesId));
 
@@ -284,38 +210,30 @@ public class PublisherService {
                 throw new AccessDeniedException("이 시리즈에 대한 접근 권한이 없습니다.");
             }
 
-            // 시리즈 내 검색/필터
             if (search != null && !search.isEmpty() && status != null && !status.isEmpty()) {
                 volumePage = volumeRepository.findBySeriesIdAndTitleContainingAndStatus(
-                        seriesId, search, status, pageable
-                );
+                        seriesId, search, status, pageable);
             } else if (search != null && !search.isEmpty()) {
                 volumePage = volumeRepository.findBySeriesIdAndTitleContaining(
-                        seriesId, search, pageable
-                );
+                        seriesId, search, pageable);
             } else if (status != null && !status.isEmpty()) {
                 volumePage = volumeRepository.findBySeriesIdAndStatus(
-                        seriesId, status, pageable
-                );
+                        seriesId, status, pageable);
             } else {
                 volumePage = volumeRepository.findBySeriesId(seriesId, pageable);
             }
         } else {
-            // 전체 볼륨 검색/필터
             if (search != null && !search.isEmpty() && status != null && !status.isEmpty()) {
-                volumePage = volumeRepository.findBySeriesPublisherIdAndTitleContainingAndStatus(
-                        publisher.getId(), search, status, pageable
-                );
+                volumePage = volumeRepository.findBySeries_Publisher_IdAndTitleContainingAndStatus(
+                        publisher.getId(), search, status, pageable);
             } else if (search != null && !search.isEmpty()) {
-                volumePage = volumeRepository.findBySeriesPublisherIdAndTitleContaining(
-                        publisher.getId(), search, pageable
-                );
+                volumePage = volumeRepository.findBySeries_Publisher_IdAndTitleContaining(
+                        publisher.getId(), search, pageable);
             } else if (status != null && !status.isEmpty()) {
-                volumePage = volumeRepository.findBySeriesPublisherIdAndStatus(
-                        publisher.getId(), status, pageable
-                );
+                volumePage = volumeRepository.findBySeries_Publisher_IdAndStatus(
+                        publisher.getId(), status, pageable);
             } else {
-                volumePage = volumeRepository.findBySeriesPublisherId(publisher.getId(), pageable);
+                volumePage = volumeRepository.findBySeries_Publisher_Id(publisher.getId(), pageable);
             }
         }
 
@@ -331,16 +249,12 @@ public class PublisherService {
         return result;
     }
 
-    /**
-     * 볼륨 상세 조회
-     */
     public VolumeDetailResponse getMyVolumeDetail(User user, Long volumeId) {
         Publisher publisher = getPublisherByUser(user);
 
         Volume volume = volumeRepository.findById(volumeId)
                 .orElseThrow(() -> new IllegalArgumentException("볼륨을 찾을 수 없습니다: " + volumeId));
 
-        // 권한 확인
         if (!volume.getSeries().getPublisher().getId().equals(publisher.getId())) {
             throw new AccessDeniedException("이 볼륨에 대한 접근 권한이 없습니다.");
         }
@@ -348,9 +262,6 @@ public class PublisherService {
         return VolumeDetailResponse.from(volume);
     }
 
-    /**
-     * 볼륨 생성
-     */
     @Transactional
     public Volume createVolume(User user, VolumeCreateRequest request) {
         Publisher publisher = getPublisherByUser(user);
@@ -358,7 +269,6 @@ public class PublisherService {
         Series series = seriesRepository.findById(request.getSeriesId())
                 .orElseThrow(() -> new IllegalArgumentException("시리즈를 찾을 수 없습니다: " + request.getSeriesId()));
 
-        // 권한 확인
         if (!series.getPublisher().getId().equals(publisher.getId())) {
             throw new AccessDeniedException("이 시리즈에 볼륨을 추가할 권한이 없습니다.");
         }
@@ -378,20 +288,15 @@ public class PublisherService {
         volume.setIsFree(request.getIsFree() != null ? request.getIsFree() : false);
         volume.setStatus(request.getStatus() != null ? request.getStatus() : "DRAFT");
         volume.setFreePages(request.getFreePages() != null ? request.getFreePages() : 0);
-        volume.setZipFile(request.getZipFile());  // ✅ ZIP 파일명
-        volume.setZipFilePath(request.getZipFilePath());  // ✅ ZIP 파일 경로
+        volume.setZipFile(request.getZipFile());
+        volume.setZipFilePath(request.getZipFilePath());
 
         Volume saved = volumeRepository.save(volume);
-
-        // 시리즈의 totalVolumes 업데이트
         updateSeriesTotalVolumes(series.getId());
 
         return saved;
     }
 
-    /**
-     * 볼륨 수정
-     */
     @Transactional
     public Volume updateVolume(User user, Long volumeId, VolumeUpdateRequest request) {
         Publisher publisher = getPublisherByUser(user);
@@ -399,64 +304,29 @@ public class PublisherService {
         Volume volume = volumeRepository.findById(volumeId)
                 .orElseThrow(() -> new IllegalArgumentException("볼륨을 찾을 수 없습니다: " + volumeId));
 
-        // 권한 확인
         if (!volume.getSeries().getPublisher().getId().equals(publisher.getId())) {
             throw new AccessDeniedException("이 볼륨에 대한 수정 권한이 없습니다.");
         }
 
-        // 필드 업데이트
-        if (request.getVolumeNumber() != null) {
-            volume.setVolumeNumber(request.getVolumeNumber());
-        }
-        if (request.getTitle() != null) {
-            volume.setTitle(request.getTitle());
-        }
-        if (request.getTitleEn() != null) {
-            volume.setTitleEn(request.getTitleEn());
-        }
-        if (request.getTitleJp() != null) {
-            volume.setTitleJp(request.getTitleJp());
-        }
-        if (request.getCoverImage() != null) {
-            volume.setCoverImage(request.getCoverImage());
-        }
-        if (request.getDescription() != null) {
-            volume.setDescription(request.getDescription());
-        }
-        if (request.getPrice() != null) {
-            volume.setPrice(request.getPrice());
-        }
-        if (request.getDiscountRate() != null) {
-            volume.setDiscountRate(request.getDiscountRate());
-        }
-        if (request.getTotalPages() != null) {
-            volume.setTotalPages(request.getTotalPages());
-        }
-        if (request.getPublishedDate() != null) {
-            volume.setPublishedDate(request.getPublishedDate());
-        }
-        if (request.getIsFree() != null) {
-            volume.setIsFree(request.getIsFree());
-        }
-        if (request.getStatus() != null) {
-            volume.setStatus(request.getStatus());
-        }
-        if (request.getFreePages() != null) {
-            volume.setFreePages(request.getFreePages());
-        }
-        if (request.getZipFile() != null) {
-            volume.setZipFile(request.getZipFile());
-        }
-        if (request.getZipFilePath() != null) {
-            volume.setZipFilePath(request.getZipFilePath());
-        }
+        if (request.getVolumeNumber() != null) volume.setVolumeNumber(request.getVolumeNumber());
+        if (request.getTitle() != null) volume.setTitle(request.getTitle());
+        if (request.getTitleEn() != null) volume.setTitleEn(request.getTitleEn());
+        if (request.getTitleJp() != null) volume.setTitleJp(request.getTitleJp());
+        if (request.getCoverImage() != null) volume.setCoverImage(request.getCoverImage());
+        if (request.getDescription() != null) volume.setDescription(request.getDescription());
+        if (request.getPrice() != null) volume.setPrice(request.getPrice());
+        if (request.getDiscountRate() != null) volume.setDiscountRate(request.getDiscountRate());
+        if (request.getTotalPages() != null) volume.setTotalPages(request.getTotalPages());
+        if (request.getPublishedDate() != null) volume.setPublishedDate(request.getPublishedDate());
+        if (request.getIsFree() != null) volume.setIsFree(request.getIsFree());
+        if (request.getStatus() != null) volume.setStatus(request.getStatus());
+        if (request.getFreePages() != null) volume.setFreePages(request.getFreePages());
+        if (request.getZipFile() != null) volume.setZipFile(request.getZipFile());
+        if (request.getZipFilePath() != null) volume.setZipFilePath(request.getZipFilePath());
 
         return volumeRepository.save(volume);
     }
 
-    /**
-     * 볼륨 삭제
-     */
     @Transactional
     public void deleteVolume(User user, Long volumeId) {
         Publisher publisher = getPublisherByUser(user);
@@ -464,15 +334,12 @@ public class PublisherService {
         Volume volume = volumeRepository.findById(volumeId)
                 .orElseThrow(() -> new IllegalArgumentException("볼륨을 찾을 수 없습니다: " + volumeId));
 
-        // 권한 확인
         if (!volume.getSeries().getPublisher().getId().equals(publisher.getId())) {
             throw new AccessDeniedException("이 볼륨에 대한 삭제 권한이 없습니다.");
         }
 
         Long seriesId = volume.getSeries().getId();
         volumeRepository.delete(volume);
-
-        // 시리즈의 totalVolumes 업데이트
         updateSeriesTotalVolumes(seriesId);
     }
 
@@ -480,19 +347,15 @@ public class PublisherService {
     // Helper 메서드
     // ========================================
 
-    /**
-     * User로부터 Publisher 조회
-     */
     private Publisher getPublisherByUser(User user) {
-        if (user.getPublisher() == null) {
+        // ✅ 수정: publisherId로 직접 조회 (Lazy Loading 문제 해결)
+        if (user.getPublisherId() == null) {
             throw new AccessDeniedException("출판사 계정이 아닙니다.");
         }
-        return user.getPublisher();
+        return publisherRepository.findById(user.getPublisherId())
+                .orElseThrow(() -> new AccessDeniedException("출판사를 찾을 수 없습니다."));
     }
 
-    /**
-     * 시리즈의 총 볼륨 수 업데이트
-     */
     private void updateSeriesTotalVolumes(Long seriesId) {
         Series series = seriesRepository.findById(seriesId).orElse(null);
         if (series != null) {
