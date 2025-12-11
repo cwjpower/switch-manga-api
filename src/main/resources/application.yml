@@ -8,7 +8,7 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
     show-sql: true
     hibernate:
-      ddl-auto: validate    # ✅ update → validate 변경!
+      ddl-auto: validate
     defer-datasource-initialization: false
     properties:
       hibernate:
@@ -27,7 +27,9 @@ spring:
       max-file-size: 1024MB
       max-request-size: 1024MB
 
-  # 기본 DB 설정
+  # ========================================
+  # 기본 DB 설정 (로컬 개발용 - 33060)
+  # ========================================
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:33060/switchmanga?allowPublicKeyRetrieval=true&useSSL=false
@@ -53,37 +55,10 @@ file:
     temp-dir: temp
 
 ---
-# 개발 환경 (local)
-spring:
-  config:
-    activate:
-      on-profile: local
-
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:33060/switchmanga?allowPublicKeyRetrieval=true&useSSL=false
-    username: root
-    password: rootpass
-    hikari:
-      maximum-pool-size: 10
-
-  jpa:
-    hibernate:
-      ddl-auto: validate    # ✅ update → validate 변경!
-    defer-datasource-initialization: false
-
-  sql:
-    init:
-      mode: never
-
-file:
-  upload:
-    base-dir: /home/ubuntu/uploads
-    books-dir: books
-    temp-dir: temp
-
----
-# 운영 환경 (prod)
+# ========================================
+# 운영 환경 (prod) - 서버에서 사용
+# 실행: java -jar app.jar --spring.profiles.active=prod
+# ========================================
 spring:
   config:
     activate:
@@ -91,24 +66,19 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://mariadb:3306/switchmanga?useSSL=true
-    username: springboot
-    password: ${DB_PASSWORD}
+    url: jdbc:mariadb://localhost:3306/switchmanga?allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: rootpass
     hikari:
       maximum-pool-size: 20
 
   jpa:
     hibernate:
-      ddl-auto: validate    # ✅ update → validate 변경!
+      ddl-auto: validate
     show-sql: false
-    defer-datasource-initialization: false
-
-  sql:
-    init:
-      mode: never
 
 file:
   upload:
-    base-dir: /var/uploads
+    base-dir: /home/ubuntu/uploads
     books-dir: books
     temp-dir: temp

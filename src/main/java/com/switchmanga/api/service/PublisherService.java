@@ -196,9 +196,22 @@ public class PublisherService {
                                             String search, String status, String sort) {
         Publisher publisher = getPublisherByUser(user);
 
-        // sort 파라미터에 따라 정렬 방향 결정
-        Sort.Direction direction = "asc".equalsIgnoreCase(sort) ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "volumeNumber"));
+        // ✅ sort 파라미터에 따라 정렬 필드와 방향 결정
+        String sortField = "createdAt";  // 기본값
+        Sort.Direction direction = Sort.Direction.DESC;  // 기본값
+
+        if ("asc".equalsIgnoreCase(sort)) {
+            direction = Sort.Direction.ASC;
+            sortField = "createdAt";
+        } else if ("desc".equalsIgnoreCase(sort)) {
+            direction = Sort.Direction.DESC;
+            sortField = "createdAt";
+        } else if ("id".equalsIgnoreCase(sort)) {
+            direction = Sort.Direction.ASC;
+            sortField = "id";
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
 
         Page<Volume> volumePage;
 

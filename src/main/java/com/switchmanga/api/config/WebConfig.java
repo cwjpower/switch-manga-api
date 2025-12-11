@@ -9,41 +9,36 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Value("${app.upload.path:/home/ubuntu/uploads}")
-    private String uploadPath;
+    @Value("${file.upload.base-dir}")
+    private String uploadBaseDir;
 
+    // ✅ CORS 설정 추가 (Flutter Web에서 이미지 로드 허용)
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("*")
+                .allowedOrigins("*")  // 모든 출처 허용 (개발용)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders("*")
                 .exposedHeaders("Authorization")
                 .maxAge(3600);
+
+        // /uploads/** 경로도 CORS 허용
+        registry.addMapping("/uploads/**")
+                .allowedOrigins("*")
+                .allowedMethods("GET", "OPTIONS")
+                .allowedHeaders("*")
+                .maxAge(3600);
+
+        System.out.println("✅ CORS enabled for all origins");
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // 업로드된 이미지 파일 서빙
-        // URL: /uploads/** → 파일 시스템: {uploadPath}/
-        // 예: /uploads/books/20251208071039_aedfff40/cover.jpg
-
-        String resourceLocation;
-
-        // OS에 따라 경로 설정
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("win")) {
-            // Windows 로컬 개발 환경
-            resourceLocation = "file:///D:/home/ubuntu/uploads/";
-        } else {
-            // Linux 서버 환경
-            resourceLocation = "file://" + uploadPath + "/";
-        }
-
+        // /uploads/** 요청을 실제 파일 시스템 경로로 매핑
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations(resourceLocation)
-                .setCachePeriod(3600); // 1시간 캐시
+                .addResourceLocations("file:" + uploadBaseDir + "/")
+                .setCachePeriod(3600);  // 1시간 캐시
 
-        System.out.println("📁 Static resource location: " + resourceLocation);
+        System.out.println("📂 Static file serving enabled: /uploads/** -> " + uploadBaseDir);
     }
 }

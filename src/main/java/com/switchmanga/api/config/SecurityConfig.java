@@ -63,7 +63,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/volumes/{id}").permitAll()
 
                         // ========================================
-                        // 2. Publisher Portal API (인증 필요) ✅
+                        // 2. Publisher Portal API (인증 필요)
                         // ========================================
                         .requestMatchers("/api/v1/publishers/me/**").authenticated()
 
@@ -86,20 +86,22 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of(
-                "http://localhost:*",
-                "http://127.0.0.1:*",
-                "http://34.64.84.117:*"
-        ));
+
+        // ✅ 모든 Origin 허용 (개발용)
+        configuration.setAllowedOriginPatterns(List.of("*"));
+
         configuration.setAllowedMethods(List.of(
                 "GET",
                 "POST",
                 "PUT",
                 "DELETE",
-                "OPTIONS"
+                "OPTIONS",
+                "PATCH"
         ));
         configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
