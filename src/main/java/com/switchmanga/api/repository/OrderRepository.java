@@ -10,6 +10,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import java.math.BigDecimal;
+
 /**
  * Order Repository
  * 주문 관련 데이터베이스 접근
@@ -32,10 +36,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      * Order → OrderItem → Volume → Series → Publisher 관계 추적
      */
     @Query("SELECT COUNT(DISTINCT o.id) FROM Order o " +
-           "JOIN o.orderItems oi " +
-           "JOIN oi.volume v " +
-           "JOIN v.series s " +
-           "WHERE s.publisher.id = :publisherId")
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId")
     Long countByPublisherId(@Param("publisherId") Long publisherId);
 
     /**
@@ -43,36 +47,36 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      * Order의 totalAmount 합계 (출판사의 모든 Volume이 포함된 주문)
      */
     @Query("SELECT COALESCE(SUM(oi.price * oi.quantity), 0.0) FROM Order o " +
-           "JOIN o.orderItems oi " +
-           "JOIN oi.volume v " +
-           "JOIN v.series s " +
-           "WHERE s.publisher.id = :publisherId " +
-           "AND o.status = 'COMPLETED'")
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status = 'COMPLETED'")
     Double calculateTotalRevenueByPublisherId(@Param("publisherId") Long publisherId);
 
     /**
      * 출판사별 이번 달 매출 계산
      */
     @Query("SELECT COALESCE(SUM(oi.price * oi.quantity), 0.0) FROM Order o " +
-           "JOIN o.orderItems oi " +
-           "JOIN oi.volume v " +
-           "JOIN v.series s " +
-           "WHERE s.publisher.id = :publisherId " +
-           "AND o.status = 'COMPLETED' " +
-           "AND YEAR(o.createdAt) = YEAR(CURRENT_DATE) " +
-           "AND MONTH(o.createdAt) = MONTH(CURRENT_DATE)")
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status = 'COMPLETED' " +
+            "AND YEAR(o.createdAt) = YEAR(CURRENT_DATE) " +
+            "AND MONTH(o.createdAt) = MONTH(CURRENT_DATE)")
     Double calculateMonthlyRevenueByPublisherId(@Param("publisherId") Long publisherId);
 
     /**
      * 출판사별 특정 기간 매출 계산
      */
     @Query("SELECT COALESCE(SUM(oi.price * oi.quantity), 0.0) FROM Order o " +
-           "JOIN o.orderItems oi " +
-           "JOIN oi.volume v " +
-           "JOIN v.series s " +
-           "WHERE s.publisher.id = :publisherId " +
-           "AND o.status = 'COMPLETED' " +
-           "AND o.createdAt BETWEEN :startDate AND :endDate")
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status = 'COMPLETED' " +
+            "AND o.createdAt BETWEEN :startDate AND :endDate")
     Double calculateRevenueByPublisherIdAndDateRange(
             @Param("publisherId") Long publisherId,
             @Param("startDate") LocalDateTime startDate,
@@ -83,27 +87,27 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      * 시리즈별 총 주문 수
      */
     @Query("SELECT COUNT(DISTINCT o.id) FROM Order o " +
-           "JOIN o.orderItems oi " +
-           "JOIN oi.volume v " +
-           "WHERE v.series.id = :seriesId")
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "WHERE v.series.id = :seriesId")
     Long countBySeriesId(@Param("seriesId") Long seriesId);
 
     /**
      * 시리즈별 매출 계산
      */
     @Query("SELECT COALESCE(SUM(oi.price * oi.quantity), 0.0) FROM Order o " +
-           "JOIN o.orderItems oi " +
-           "JOIN oi.volume v " +
-           "WHERE v.series.id = :seriesId " +
-           "AND o.status = 'COMPLETED'")
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "WHERE v.series.id = :seriesId " +
+            "AND o.status = 'COMPLETED'")
     Double calculateRevenueBySeriesId(@Param("seriesId") Long seriesId);
 
     /**
      * Volume별 주문 수
      */
     @Query("SELECT COUNT(DISTINCT o.id) FROM Order o " +
-           "JOIN o.orderItems oi " +
-           "WHERE oi.volume.id = :volumeId")
+            "JOIN o.orderItems oi " +
+            "WHERE oi.volume.id = :volumeId")
     Long countByVolumeId(@Param("volumeId") Long volumeId);
 
     /**
@@ -153,4 +157,138 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      * 상태별 주문 수 조회
      */
     Long countByStatus(String status);
+
+    // ========================================
+    // 🆕 출판사 포털용 주문 조회 API
+    // ========================================
+
+    /**
+     * 출판사별 주문 목록 조회 (페이징)
+     */
+    @Query(value = "SELECT DISTINCT o FROM Order o " +
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId",
+            countQuery = "SELECT COUNT(DISTINCT o) FROM Order o " +
+                    "JOIN o.orderItems oi " +
+                    "JOIN oi.volume v " +
+                    "JOIN v.series s " +
+                    "WHERE s.publisher.id = :publisherId")
+    Page<Order> findByPublisherId(@Param("publisherId") Long publisherId, Pageable pageable);
+
+    /**
+     * 출판사별 + 상태별 주문 목록 조회
+     */
+    @Query(value = "SELECT DISTINCT o FROM Order o " +
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status = :status",
+            countQuery = "SELECT COUNT(DISTINCT o) FROM Order o " +
+                    "JOIN o.orderItems oi " +
+                    "JOIN oi.volume v " +
+                    "JOIN v.series s " +
+                    "WHERE s.publisher.id = :publisherId " +
+                    "AND o.status = :status")
+    Page<Order> findByPublisherIdAndStatus(
+            @Param("publisherId") Long publisherId,
+            @Param("status") String status,
+            Pageable pageable);
+
+    /**
+     * 출판사별 + 기간별 주문 목록 조회
+     */
+    @Query(value = "SELECT DISTINCT o FROM Order o " +
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.createdAt BETWEEN :startDate AND :endDate",
+            countQuery = "SELECT COUNT(DISTINCT o) FROM Order o " +
+                    "JOIN o.orderItems oi " +
+                    "JOIN oi.volume v " +
+                    "JOIN v.series s " +
+                    "WHERE s.publisher.id = :publisherId " +
+                    "AND o.createdAt BETWEEN :startDate AND :endDate")
+    Page<Order> findByPublisherIdAndDateRange(
+            @Param("publisherId") Long publisherId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
+            Pageable pageable);
+
+    /**
+     * 출판사별 + 상태별 + 기간별 주문 목록 조회
+     */
+    @Query(value = "SELECT DISTINCT o FROM Order o " +
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status = :status " +
+            "AND o.createdAt BETWEEN :startDate AND :endDate",
+            countQuery = "SELECT COUNT(DISTINCT o) FROM Order o " +
+                    "JOIN o.orderItems oi " +
+                    "JOIN oi.volume v " +
+                    "JOIN v.series s " +
+                    "WHERE s.publisher.id = :publisherId " +
+                    "AND o.status = :status " +
+                    "AND o.createdAt BETWEEN :startDate AND :endDate")
+    Page<Order> findByPublisherIdAndStatusAndDateRange(
+            @Param("publisherId") Long publisherId,
+            @Param("status") String status,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
+            Pageable pageable);
+
+    /**
+     * 베스트셀러 조회 (판매량 기준)
+     */
+    @Query("SELECT oi.volume.id, COUNT(oi) as salesCount, SUM(oi.subtotal) as revenue " +
+            "FROM OrderItem oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "JOIN oi.order o " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status IN ('PAID', 'COMPLETED') " +
+            "GROUP BY oi.volume.id " +
+            "ORDER BY salesCount DESC")
+    List<Object[]> findBestsellersByPublisherId(@Param("publisherId") Long publisherId, Pageable pageable);
+
+    /**
+     * 출판사별 오늘 매출
+     */
+    @Query("SELECT COALESCE(SUM(oi.subtotal), 0) FROM Order o " +
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status IN ('PAID', 'COMPLETED') " +
+            "AND DATE(o.createdAt) = CURRENT_DATE")
+    BigDecimal calculateTodayRevenueByPublisherId(@Param("publisherId") Long publisherId);
+
+    /**
+     * 출판사별 총 매출 (BigDecimal 버전)
+     */
+    @Query("SELECT COALESCE(SUM(oi.subtotal), 0) FROM Order o " +
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status IN ('PAID', 'COMPLETED')")
+    BigDecimal calculateTotalRevenueByPublisherIdAsBigDecimal(@Param("publisherId") Long publisherId);
+
+    /**
+     * 출판사별 이번달 매출 (BigDecimal 버전)
+     */
+    @Query("SELECT COALESCE(SUM(oi.subtotal), 0) FROM Order o " +
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status IN ('PAID', 'COMPLETED') " +
+            "AND YEAR(o.createdAt) = YEAR(CURRENT_DATE) " +
+            "AND MONTH(o.createdAt) = MONTH(CURRENT_DATE)")
+    BigDecimal calculateMonthlyRevenueByPublisherIdAsBigDecimal(@Param("publisherId") Long publisherId);
 }

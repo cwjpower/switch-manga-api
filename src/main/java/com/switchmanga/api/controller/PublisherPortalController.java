@@ -3,6 +3,7 @@ package com.switchmanga.api.controller;
 import com.switchmanga.api.dto.publisher.*;
 import com.switchmanga.api.dto.series.*;
 import com.switchmanga.api.dto.volume.*;
+import com.switchmanga.api.dto.order.*;
 import com.switchmanga.api.entity.Series;
 import com.switchmanga.api.entity.User;
 import com.switchmanga.api.entity.Volume;
@@ -10,11 +11,14 @@ import com.switchmanga.api.service.PublisherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -170,15 +174,15 @@ public class PublisherPortalController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size,
             @RequestParam(required = false) Long seriesId,
-            @RequestParam(required = false) String search,    // ✅ 추가: 검색어 (제목, 시리즈명)
-            @RequestParam(required = false) String status,    // ✅ 추가: 상태 필터
-            @RequestParam(defaultValue = "desc") String sort, // ✅ 추가: 정렬 (desc/asc)
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "desc") String sort,
             Authentication authentication
     ) {
         try {
             User user = (User) authentication.getPrincipal();
             Map<String, Object> result = publisherService.getMyVolumes(
-                    user, page, size, seriesId, search, status, sort  // ✅ 파라미터 전달
+                    user, page, size, seriesId, search, status, sort
             );
 
             Map<String, Object> response = new HashMap<>();
@@ -362,6 +366,90 @@ public class PublisherPortalController {
             ));
         } catch (Exception e) {
             log.error("출판사 통계 조회 실패", e);
+            return ResponseEntity.status(500).body(
+                    Map.of("code", 1, "msg", e.getMessage())
+            );
+        }
+    }
+
+    // ========================================
+    // Order 관련 API (내 주문 내역)
+    // ========================================
+
+    /**
+     * 내 주문 목록 조회
+     */
+    @GetMapping("/me/orders")
+    public ResponseEntity<?> getMyOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam(defaultValue = "desc") String sort,
+            Authentication authentication
+    ) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            Map<String, Object> result = publisherService.getMyOrders(
+                    user, page, size, status, startDate, endDate, sort
+            );
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 0);
+            response.put("msg", "조회 성공");
+            response.putAll(result);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("주문 목록 조회 실패", e);
+            return ResponseEntity.status(500).body(
+                    Map.of("code", 1, "msg", e.getMessage())
+            );
+        }
+    }
+
+    /**
+     * 내 주문 통계 조회
+     */
+    @GetMapping("/me/orders/stats")
+    public ResponseEntity<?> getMyOrderStats(Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            OrderStatsResponse result = publisherService.getMyOrderStats(user);
+
+            return ResponseEntity.ok(Map.of(
+                    "code", 0,
+                    "msg", "조회 성공",
+                    "data", result
+            ));
+        } catch (Exception e) {
+            log.error("주문 통계 조회 실패", e);
+            return ResponseEntity.status(500).body(
+                    Map.of("code", 1, "msg", e.getMessage())
+            );
+        }
+    }
+
+    /**
+     * 베스트셀러 조회
+     */
+    @GetMapping("/me/orders/bestsellers")
+    public ResponseEntity<?> getMyBestsellers(
+            @RequestParam(defaultValue = "10") int limit,
+            Authentication authentication
+    ) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            List<BestsellerResponse> result = publisherService.getMyBestsellers(user, limit);
+
+            return ResponseEntity.ok(Map.of(
+                    "code", 0,
+                    "msg", "조회 성공",
+                    "data", result
+            ));
+        } catch (Exception e) {
+            log.error("베스트셀러 조회 실패", e);
             return ResponseEntity.status(500).body(
                     Map.of("code", 1, "msg", e.getMessage())
             );

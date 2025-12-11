@@ -3,6 +3,7 @@ package com.switchmanga.api.service;
 import com.switchmanga.api.dto.publisher.*;
 import com.switchmanga.api.dto.series.*;
 import com.switchmanga.api.dto.volume.*;
+import com.switchmanga.api.dto.order.*;
 import com.switchmanga.api.entity.*;
 import com.switchmanga.api.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,6 +33,7 @@ public class PublisherService {
     private final SeriesRepository seriesRepository;
     private final VolumeRepository volumeRepository;
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
 
     // ========================================
     // Publisher 관련 메서드
@@ -354,6 +359,107 @@ public class PublisherService {
         Long seriesId = volume.getSeries().getId();
         volumeRepository.delete(volume);
         updateSeriesTotalVolumes(seriesId);
+    }
+
+    // ========================================
+    // Order 관련 메서드 (내 주문 내역)
+    // ========================================
+
+    /**
+     * 내 주문 목록 조회
+     */
+    public Map<String, Object> getMyOrders(User user, int page, int size,
+                                           String status, LocalDateTime startDate,
+                                           LocalDateTime endDate, String sort) {
+        Publisher publisher = getPublisherByUser(user);
+
+        // 정렬 설정
+        Sort.Direction direction = "asc".equalsIgnoreCase(sort) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
+
+        Page<Order> orderPage;
+
+        // 조건별 조회
+        if (status != null && !status.isEmpty() && startDate != null && endDate != null) {
+            orderPage = orderRepository.findByPublisherIdAndStatusAndDateRange(
+                    publisher.getId(), status, startDate, endDate, pageable);
+        } else if (status != null && !status.isEmpty()) {
+            orderPage = orderRepository.findByPublisherIdAndStatus(
+                    publisher.getId(), status, pageable);
+        } else if (startDate != null && endDate != null) {
+            orderPage = orderRepository.findByPublisherIdAndDateRange(
+                    publisher.getId(), startDate, endDate, pageable);
+        } else {
+            orderPage = orderRepository.findByPublisherId(publisher.getId(), pageable);
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("content", orderPage.getContent().stream()
+                .map(OrderListResponse::from)
+                .collect(Collectors.toList()));
+        result.put("page", orderPage.getNumber());
+        result.put("size", orderPage.getSize());
+        result.put("totalElements", orderPage.getTotalElements());
+        result.put("totalPages", orderPage.getTotalPages());
+
+        return result;
+    }
+
+    /**
+     * 내 주문 통계 조회
+     */
+    public OrderStatsResponse getMyOrderStats(User user) {
+        Publisher publisher = getPublisherByUser(user);
+        Long publisherId = publisher.getId();
+
+        Long totalOrders = orderRepository.countByPublisherId(publisherId);
+        BigDecimal totalRevenue = orderRepository.calculateTotalRevenueByPublisherIdAsBigDecimal(publisherId);
+        BigDecimal thisMonthRevenue = orderRepository.calculateMonthlyRevenueByPublisherIdAsBigDecimal(publisherId);
+        BigDecimal todayRevenue = orderRepository.calculateTodayRevenueByPublisherId(publisherId);
+
+        return OrderStatsResponse.builder()
+                .totalOrders(totalOrders != null ? totalOrders : 0L)
+                .totalRevenue(totalRevenue != null ? totalRevenue : BigDecimal.ZERO)
+                .thisMonthRevenue(thisMonthRevenue != null ? thisMonthRevenue : BigDecimal.ZERO)
+                .todayRevenue(todayRevenue != null ? todayRevenue : BigDecimal.ZERO)
+                .build();
+    }
+
+    /**
+     * 베스트셀러 조회
+     */
+    public java.util.List<BestsellerResponse> getMyBestsellers(User user, int limit) {
+        Publisher publisher = getPublisherByUser(user);
+        Pageable pageable = PageRequest.of(0, limit);
+
+        java.util.List<Object[]> results = orderRepository.findBestsellersByPublisherId(publisher.getId(), pageable);
+
+        java.util.List<BestsellerResponse> bestsellers = new ArrayList<>();
+        int rank = 1;
+
+        for (Object[] row : results) {
+            Long volumeId = (Long) row[0];
+            Long salesCount = (Long) row[1];
+            BigDecimal revenue = (BigDecimal) row[2];
+
+            // Volume 정보 조회
+            Volume volume = volumeRepository.findById(volumeId).orElse(null);
+            if (volume != null) {
+                bestsellers.add(BestsellerResponse.builder()
+                        .rank(rank++)
+                        .volumeId(volumeId)
+                        .volumeTitle(volume.getTitle())
+                        .volumeNumber(volume.getVolumeNumber())
+                        .seriesId(volume.getSeries().getId())
+                        .seriesTitle(volume.getSeries().getTitle())
+                        .coverImage(volume.getCoverImage())
+                        .salesCount(salesCount)
+                        .revenue(revenue)
+                        .build());
+            }
+        }
+
+        return bestsellers;
     }
 
     // ========================================
