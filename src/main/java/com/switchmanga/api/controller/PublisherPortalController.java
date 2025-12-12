@@ -377,7 +377,7 @@ public class PublisherPortalController {
     // ========================================
 
     /**
-     * 내 주문 목록 조회
+     * 내 주문 목록 조회 (통합 검색 지원)
      */
     @GetMapping("/me/orders")
     public ResponseEntity<?> getMyOrders(
@@ -387,12 +387,13 @@ public class PublisherPortalController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
             @RequestParam(defaultValue = "desc") String sort,
+            @RequestParam(required = false) String keyword,  // ✅ 통합 검색 키워드 추가
             Authentication authentication
     ) {
         try {
             User user = (User) authentication.getPrincipal();
             Map<String, Object> result = publisherService.getMyOrders(
-                    user, page, size, status, startDate, endDate, sort
+                    user, page, size, status, startDate, endDate, sort, keyword  // ✅ keyword 전달
             );
 
             Map<String, Object> response = new HashMap<>();

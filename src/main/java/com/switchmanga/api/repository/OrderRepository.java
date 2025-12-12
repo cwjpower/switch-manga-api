@@ -291,4 +291,32 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "AND YEAR(o.createdAt) = YEAR(CURRENT_DATE) " +
             "AND MONTH(o.createdAt) = MONTH(CURRENT_DATE)")
     BigDecimal calculateMonthlyRevenueByPublisherIdAsBigDecimal(@Param("publisherId") Long publisherId);
+
+    /**
+     * 출판사별 주문 검색 (통합 검색)
+     */
+    @Query(value = "SELECT DISTINCT o FROM Order o " +
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND (o.orderNumber LIKE %:keyword% " +
+            "OR o.user.username LIKE %:keyword% " +
+            "OR o.user.email LIKE %:keyword% " +
+            "OR s.title LIKE %:keyword% " +
+            "OR v.title LIKE %:keyword%)",
+            countQuery = "SELECT COUNT(DISTINCT o) FROM Order o " +
+                    "JOIN o.orderItems oi " +
+                    "JOIN oi.volume v " +
+                    "JOIN v.series s " +
+                    "WHERE s.publisher.id = :publisherId " +
+                    "AND (o.orderNumber LIKE %:keyword% " +
+                    "OR o.user.username LIKE %:keyword% " +
+                    "OR o.user.email LIKE %:keyword% " +
+                    "OR s.title LIKE %:keyword% " +
+                    "OR v.title LIKE %:keyword%)")
+    Page<Order> searchByPublisherId(
+            @Param("publisherId") Long publisherId,
+            @Param("keyword") String keyword,
+            Pageable pageable);
 }

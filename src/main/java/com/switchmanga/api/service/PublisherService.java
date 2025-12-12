@@ -370,17 +370,19 @@ public class PublisherService {
      */
     public Map<String, Object> getMyOrders(User user, int page, int size,
                                            String status, LocalDateTime startDate,
-                                           LocalDateTime endDate, String sort) {
+                                           LocalDateTime endDate, String sort,
+                                           String keyword) {  // ✅ keyword 추가
         Publisher publisher = getPublisherByUser(user);
 
-        // 정렬 설정
         Sort.Direction direction = "asc".equalsIgnoreCase(sort) ? Sort.Direction.ASC : Sort.Direction.DESC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
 
         Page<Order> orderPage;
 
-        // 조건별 조회
-        if (status != null && !status.isEmpty() && startDate != null && endDate != null) {
+        // ✅ 키워드 검색이 있으면 검색 쿼리 사용
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            orderPage = orderRepository.searchByPublisherId(publisher.getId(), keyword.trim(), pageable);
+        } else if (status != null && !status.isEmpty() && startDate != null && endDate != null) {
             orderPage = orderRepository.findByPublisherIdAndStatusAndDateRange(
                     publisher.getId(), status, startDate, endDate, pageable);
         } else if (status != null && !status.isEmpty()) {
