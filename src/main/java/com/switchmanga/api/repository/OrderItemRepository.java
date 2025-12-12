@@ -18,3 +18,4 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     // 주문별 항목 개수
     Long countByOrderId(Long orderId);
 }
+

@@ -23,6 +23,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.switchmanga.api.dto.response.RevenueStatsResponse;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+
+import java.util.List;
+import java.util.ArrayList;
+
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -485,4 +496,169 @@ public class PublisherService {
             seriesRepository.save(series);
         }
     }
+
+    // ========================================
+    // 🆕 매출 현황 (Revenue)
+    // ========================================
+
+    /**
+     * 내 매출 현황 조회
+     * @param user 현재 사용자
+     * @param period 기간 (today, week, month, year)
+     * @param startDate 시작일 (custom 기간용)
+     * @param endDate 종료일 (custom 기간용)
+     */
+    public RevenueStatsResponse getMyRevenue(User user, String period,
+                                             LocalDate startDate, LocalDate endDate) {
+        Publisher publisher = getPublisherByUser(user);
+        Long publisherId = publisher.getId();
+
+        // 1. 기간 계산
+        LocalDateTime periodStart;
+        LocalDateTime periodEnd;
+        LocalDateTime prevPeriodStart;
+        LocalDateTime prevPeriodEnd;
+        String periodType = period != null ? period : "month";
+
+        LocalDate today = LocalDate.now();
+
+        switch (periodType) {
+            case "today":
+                periodStart = today.atStartOfDay();
+                periodEnd = LocalDateTime.now();
+                prevPeriodStart = today.minusDays(1).atStartOfDay();
+                prevPeriodEnd = today.minusDays(1).atTime(LocalDateTime.now().toLocalTime());
+                break;
+            case "week":
+                LocalDate weekStart = today.with(DayOfWeek.MONDAY);
+                periodStart = weekStart.atStartOfDay();
+                periodEnd = LocalDateTime.now();
+                prevPeriodStart = weekStart.minusWeeks(1).atStartOfDay();
+                prevPeriodEnd = weekStart.minusWeeks(1).plusDays(
+                        java.time.temporal.ChronoUnit.DAYS.between(weekStart, today)
+                ).atTime(LocalDateTime.now().toLocalTime());
+                break;
+            case "year":
+                periodStart = today.withDayOfYear(1).atStartOfDay();
+                periodEnd = LocalDateTime.now();
+                prevPeriodStart = today.minusYears(1).withDayOfYear(1).atStartOfDay();
+                prevPeriodEnd = today.minusYears(1).withDayOfYear(today.getDayOfYear())
+                        .atTime(LocalDateTime.now().toLocalTime());
+                break;
+            case "custom":
+                if (startDate == null || endDate == null) {
+                    throw new IllegalArgumentException("custom 기간은 startDate와 endDate가 필요합니다");
+                }
+                periodStart = startDate.atStartOfDay();
+                periodEnd = endDate.atTime(23, 59, 59);
+                // custom은 비교 기간 없음
+                prevPeriodStart = null;
+                prevPeriodEnd = null;
+                break;
+            case "month":
+            default:
+                periodType = "month";
+                periodStart = today.withDayOfMonth(1).atStartOfDay();
+                periodEnd = LocalDateTime.now();
+                prevPeriodStart = today.minusMonths(1).withDayOfMonth(1).atStartOfDay();
+                prevPeriodEnd = today.minusMonths(1).withDayOfMonth(
+                        Math.min(today.getDayOfMonth(), today.minusMonths(1).lengthOfMonth())
+                ).atTime(LocalDateTime.now().toLocalTime());
+                break;
+        }
+
+        // 2. 현재 기간 데이터
+        BigDecimal currentRevenue = orderRepository.calculateRevenueByPublisherIdAndDateRangeAsBigDecimal(
+                publisherId, periodStart, periodEnd);
+        Long currentSales = orderRepository.countSalesByPublisherIdAndDateRange(
+                publisherId, periodStart, periodEnd);
+
+        if (currentRevenue == null) currentRevenue = BigDecimal.ZERO;
+        if (currentSales == null) currentSales = 0L;
+
+        // 3. 이전 기간 데이터 (비교용)
+        BigDecimal previousRevenue = BigDecimal.ZERO;
+        Long previousSales = 0L;
+
+        if (prevPeriodStart != null && prevPeriodEnd != null) {
+            previousRevenue = orderRepository.calculateRevenueByPublisherIdAndDateRangeAsBigDecimal(
+                    publisherId, prevPeriodStart, prevPeriodEnd);
+            previousSales = orderRepository.countSalesByPublisherIdAndDateRange(
+                    publisherId, prevPeriodStart, prevPeriodEnd);
+
+            if (previousRevenue == null) previousRevenue = BigDecimal.ZERO;
+            if (previousSales == null) previousSales = 0L;
+        }
+
+        // 4. 계산
+        BigDecimal netRevenue = currentRevenue.multiply(BigDecimal.valueOf(0.7))
+                .setScale(0, RoundingMode.HALF_UP);
+        BigDecimal platformFee = currentRevenue.multiply(BigDecimal.valueOf(0.3))
+                .setScale(0, RoundingMode.HALF_UP);
+        BigDecimal averagePrice = currentSales > 0
+                ? currentRevenue.divide(BigDecimal.valueOf(currentSales), 0, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
+
+        String revenueChangeRate = RevenueStatsResponse.calculateChangeRate(currentRevenue, previousRevenue);
+        String salesChangeRate = RevenueStatsResponse.calculateChangeRate(currentSales, previousSales);
+
+        // 5. 시리즈별 매출 Top 10
+        List<Object[]> seriesData = orderRepository.findSeriesRevenueByPublisherIdAndDateRange(
+                publisherId, periodStart, periodEnd, PageRequest.of(0, 10));
+
+        List<RevenueStatsResponse.SeriesRevenue> topSeries = new ArrayList<>();
+        int rank = 1;
+        for (Object[] row : seriesData) {
+            Long seriesId = (Long) row[0];
+            String title = (String) row[1];
+            String coverImage = (String) row[2];
+            Long salesCount = (Long) row[3];
+            BigDecimal revenue = (BigDecimal) row[4];
+
+            double percentage = currentRevenue.compareTo(BigDecimal.ZERO) > 0
+                    ? revenue.multiply(BigDecimal.valueOf(100))
+                    .divide(currentRevenue, 1, RoundingMode.HALF_UP).doubleValue()
+                    : 0.0;
+
+            topSeries.add(RevenueStatsResponse.SeriesRevenue.builder()
+                    .rank(rank++)
+                    .seriesId(seriesId)
+                    .seriesTitle(title)
+                    .coverImage(coverImage)
+                    .salesCount(salesCount)
+                    .revenue(revenue)
+                    .percentage(percentage)
+                    .build());
+        }
+
+        // 6. 응답 생성
+        return RevenueStatsResponse.builder()
+                .period(RevenueStatsResponse.PeriodInfo.builder()
+                        .type(periodType)
+                        .startDate(periodStart.toLocalDate())
+                        .endDate(periodEnd.toLocalDate())
+                        .build())
+                .summary(RevenueStatsResponse.SummaryStats.builder()
+                        .totalRevenue(currentRevenue)
+                        .netRevenue(netRevenue)
+                        .totalSales(currentSales)
+                        .averagePrice(averagePrice)
+                        .revenueChangeRate(revenueChangeRate)
+                        .salesChangeRate(salesChangeRate)
+                        .previousRevenue(previousRevenue)
+                        .previousSales(previousSales)
+                        .build())
+                .distribution(RevenueStatsResponse.RevenueDistribution.builder()
+                        .totalRevenue(currentRevenue)
+                        .publisherShare(netRevenue)
+                        .platformFee(platformFee)
+                        .shareRatio(70)
+                        .build())
+                .topSeries(topSeries)
+                .build();
+    }
+
+
+
+
 }

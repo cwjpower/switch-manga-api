@@ -21,6 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+import com.switchmanga.api.dto.response.RevenueStatsResponse;
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/api/v1/publishers")
 @RequiredArgsConstructor
@@ -454,6 +458,47 @@ public class PublisherPortalController {
             return ResponseEntity.status(500).body(
                     Map.of("code", 1, "msg", e.getMessage())
             );
+        }
+    }
+    // ========================================
+    // 🆕 매출 현황 API
+    // ========================================
+
+    /**
+     * 내 매출 현황 조회
+     * GET /api/v1/publishers/me/revenue
+     *
+     * @param period 기간 (today, week, month, year, custom)
+     * @param startDate 시작일 (custom 기간용)
+     * @param endDate 종료일 (custom 기간용)
+     */
+    @GetMapping("/me/revenue")
+    public ResponseEntity<?> getMyRevenue(
+            @RequestParam(defaultValue = "month") String period,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            Authentication authentication
+    ) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            RevenueStatsResponse response = publisherService.getMyRevenue(user, period, startDate, endDate);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("code", 0);
+            result.put("msg", "조회 성공");
+            result.put("data", response);
+
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("code", 1);
+            error.put("msg", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("code", 1);
+            error.put("msg", "매출 조회 실패: " + e.getMessage());
+            return ResponseEntity.status(500).body(error);
         }
     }
 }

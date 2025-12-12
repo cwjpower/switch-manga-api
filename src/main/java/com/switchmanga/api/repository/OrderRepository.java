@@ -13,6 +13,8 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 
 /**
  * Order Repository
@@ -319,4 +321,84 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("publisherId") Long publisherId,
             @Param("keyword") String keyword,
             Pageable pageable);
+
+
+    // ========================================
+    // 🆕 매출 현황용 추가 쿼리
+    // ========================================
+
+    /**
+     * 출판사별 이번 주 매출
+     */
+    @Query("SELECT COALESCE(SUM(oi.subtotal), 0) FROM Order o " +
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status IN ('PAID', 'COMPLETED') " +
+            "AND o.createdAt >= :weekStart")
+    BigDecimal calculateWeeklyRevenueByPublisherId(
+            @Param("publisherId") Long publisherId,
+            @Param("weekStart") LocalDateTime weekStart);
+
+    /**
+     * 출판사별 기간 매출 (BigDecimal)
+     */
+    @Query("SELECT COALESCE(SUM(oi.subtotal), 0) FROM Order o " +
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status IN ('PAID', 'COMPLETED') " +
+            "AND o.createdAt BETWEEN :startDate AND :endDate")
+    BigDecimal calculateRevenueByPublisherIdAndDateRangeAsBigDecimal(
+            @Param("publisherId") Long publisherId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
+
+    /**
+     * 출판사별 기간 판매량 (건수)
+     */
+    @Query("SELECT COUNT(oi) FROM Order o " +
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status IN ('PAID', 'COMPLETED') " +
+            "AND o.createdAt BETWEEN :startDate AND :endDate")
+    Long countSalesByPublisherIdAndDateRange(
+            @Param("publisherId") Long publisherId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
+
+    /**
+     * 출판사별 총 판매량 (건수)
+     */
+    @Query("SELECT COUNT(oi) FROM Order o " +
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status IN ('PAID', 'COMPLETED')")
+    Long countTotalSalesByPublisherId(@Param("publisherId") Long publisherId);
+
+    /**
+     * 시리즈별 매출 Top N (상세 버전)
+     */
+    @Query("SELECT s.id, s.title, s.coverImage, COUNT(oi), COALESCE(SUM(oi.subtotal), 0) " +
+            "FROM Order o " +
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status IN ('PAID', 'COMPLETED') " +
+            "AND o.createdAt BETWEEN :startDate AND :endDate " +
+            "GROUP BY s.id, s.title, s.coverImage " +
+            "ORDER BY SUM(oi.subtotal) DESC")
+    List<Object[]> findSeriesRevenueByPublisherIdAndDateRange(
+            @Param("publisherId") Long publisherId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
+            Pageable pageable);
 }
+
