@@ -300,21 +300,21 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "JOIN oi.volume v " +
             "JOIN v.series s " +
             "WHERE s.publisher.id = :publisherId " +
-            "AND (o.orderNumber LIKE %:keyword% " +
-            "OR o.user.username LIKE %:keyword% " +
-            "OR o.user.email LIKE %:keyword% " +
-            "OR s.title LIKE %:keyword% " +
-            "OR v.title LIKE %:keyword%)",
+            "AND (o.orderNumber LIKE CONCAT('%', :keyword, '%') " +
+            "OR o.user.username LIKE CONCAT('%', :keyword, '%') " +
+            "OR o.user.email LIKE CONCAT('%', :keyword, '%') " +
+            "OR s.title LIKE CONCAT('%', :keyword, '%') " +
+            "OR v.title LIKE CONCAT('%', :keyword, '%'))",
             countQuery = "SELECT COUNT(DISTINCT o) FROM Order o " +
                     "JOIN o.orderItems oi " +
                     "JOIN oi.volume v " +
                     "JOIN v.series s " +
                     "WHERE s.publisher.id = :publisherId " +
-                    "AND (o.orderNumber LIKE %:keyword% " +
-                    "OR o.user.username LIKE %:keyword% " +
-                    "OR o.user.email LIKE %:keyword% " +
-                    "OR s.title LIKE %:keyword% " +
-                    "OR v.title LIKE %:keyword%)")
+                    "AND (o.orderNumber LIKE CONCAT('%', :keyword, '%') " +
+                    "OR o.user.username LIKE CONCAT('%', :keyword, '%') " +
+                    "OR o.user.email LIKE CONCAT('%', :keyword, '%') " +
+                    "OR s.title LIKE CONCAT('%', :keyword, '%') " +
+                    "OR v.title LIKE CONCAT('%', :keyword, '%'))")
     Page<Order> searchByPublisherId(
             @Param("publisherId") Long publisherId,
             @Param("keyword") String keyword,
