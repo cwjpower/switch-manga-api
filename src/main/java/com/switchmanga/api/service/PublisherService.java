@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.switchmanga.api.dto.response.RevenueStatsResponse;
+import com.switchmanga.api.dto.response.RevenueTrendResponse;  // ← 이거 추가!
 
 
 @Service
@@ -530,6 +531,88 @@ public class PublisherService {
             seriesRepository.save(series);
         }
     }
+// ========================================
+    // 🆕 매출 추이 (Revenue Trend) - 차트용
+    // ========================================
+
+    public RevenueTrendResponse getRevenueTrend(User user, String period) {
+        Publisher publisher = getPublisherByUser(user);
+        Long publisherId = publisher.getId();
+
+        LocalDate today = LocalDate.now();
+        List<RevenueTrendResponse.TrendPoint> currentPoints = new ArrayList<>();
+        List<RevenueTrendResponse.TrendPoint> previousPoints = new ArrayList<>();
+
+        java.time.format.DateTimeFormatter dateFormatter = java.time.format.DateTimeFormatter.ofPattern("MM/dd");
+
+        switch (period != null ? period : "month") {
+            case "today":
+                for (int hour = 0; hour <= LocalDateTime.now().getHour(); hour++) {
+                    LocalDateTime start = today.atTime(hour, 0);
+                    LocalDateTime end = today.atTime(hour, 59, 59);
+                    BigDecimal revenue = orderRepository.calculateRevenueByPublisherIdAndDateRangeAsBigDecimal(publisherId, start, end);
+                    Long sales = orderRepository.countSalesByPublisherIdAndDateRange(publisherId, start, end);
+                    currentPoints.add(RevenueTrendResponse.TrendPoint.builder()
+                            .label(String.format("%02d:00", hour))
+                            .revenue(revenue != null ? revenue : BigDecimal.ZERO)
+                            .sales(sales != null ? sales : 0L)
+                            .build());
+                }
+                break;
+            case "week":
+                LocalDate weekStart = today.with(DayOfWeek.MONDAY);
+                for (int i = 0; i <= (int) java.time.temporal.ChronoUnit.DAYS.between(weekStart, today); i++) {
+                    LocalDate date = weekStart.plusDays(i);
+                    LocalDateTime start = date.atStartOfDay();
+                    LocalDateTime end = date.atTime(23, 59, 59);
+                    BigDecimal revenue = orderRepository.calculateRevenueByPublisherIdAndDateRangeAsBigDecimal(publisherId, start, end);
+                    Long sales = orderRepository.countSalesByPublisherIdAndDateRange(publisherId, start, end);
+                    currentPoints.add(RevenueTrendResponse.TrendPoint.builder()
+                            .label(date.format(java.time.format.DateTimeFormatter.ofPattern("E")))
+                            .revenue(revenue != null ? revenue : BigDecimal.ZERO)
+                            .sales(sales != null ? sales : 0L)
+                            .build());
+                }
+                break;
+            case "year":
+                for (int month = 1; month <= today.getMonthValue(); month++) {
+                    LocalDate monthStart = today.withMonth(month).withDayOfMonth(1);
+                    LocalDate monthEnd = month == today.getMonthValue() ? today : monthStart.withDayOfMonth(monthStart.lengthOfMonth());
+                    LocalDateTime start = monthStart.atStartOfDay();
+                    LocalDateTime end = monthEnd.atTime(23, 59, 59);
+                    BigDecimal revenue = orderRepository.calculateRevenueByPublisherIdAndDateRangeAsBigDecimal(publisherId, start, end);
+                    Long sales = orderRepository.countSalesByPublisherIdAndDateRange(publisherId, start, end);
+                    currentPoints.add(RevenueTrendResponse.TrendPoint.builder()
+                            .label(month + "월")
+                            .revenue(revenue != null ? revenue : BigDecimal.ZERO)
+                            .sales(sales != null ? sales : 0L)
+                            .build());
+                }
+                break;
+            case "month":
+            default:
+                for (int day = 1; day <= today.getDayOfMonth(); day++) {
+                    LocalDate date = today.withDayOfMonth(day);
+                    LocalDateTime start = date.atStartOfDay();
+                    LocalDateTime end = date.atTime(23, 59, 59);
+                    BigDecimal revenue = orderRepository.calculateRevenueByPublisherIdAndDateRangeAsBigDecimal(publisherId, start, end);
+                    Long sales = orderRepository.countSalesByPublisherIdAndDateRange(publisherId, start, end);
+                    currentPoints.add(RevenueTrendResponse.TrendPoint.builder()
+                            .label(date.format(dateFormatter))
+                            .revenue(revenue != null ? revenue : BigDecimal.ZERO)
+                            .sales(sales != null ? sales : 0L)
+                            .build());
+                }
+                break;
+        }
+
+        return RevenueTrendResponse.builder()
+                .period(period != null ? period : "month")
+                .current(currentPoints)
+                .previous(previousPoints)
+                .build();
+    }
+
 
     // ========================================
     // 🆕 매출 현황 (Revenue)
@@ -691,4 +774,5 @@ public class PublisherService {
                 .topSeries(topSeries)
                 .build();
     }
+
 }

@@ -23,7 +23,11 @@ import java.util.Map;
 
 
 import com.switchmanga.api.dto.response.RevenueStatsResponse;
+import com.switchmanga.api.dto.response.RevenueTrendResponse;
 import java.time.LocalDate;
+
+
+
 
 @RestController
 @RequestMapping("/api/v1/publishers")
@@ -391,13 +395,13 @@ public class PublisherPortalController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
             @RequestParam(defaultValue = "desc") String sort,
-            @RequestParam(required = false) String keyword,  // ✅ 통합 검색 키워드 추가
+            @RequestParam(required = false) String keyword,
             Authentication authentication
     ) {
         try {
             User user = (User) authentication.getPrincipal();
             Map<String, Object> result = publisherService.getMyOrders(
-                    user, page, size, status, startDate, endDate, sort, keyword  // ✅ keyword 전달
+                    user, page, size, status, startDate, endDate, sort, keyword
             );
 
             Map<String, Object> response = new HashMap<>();
@@ -460,6 +464,7 @@ public class PublisherPortalController {
             );
         }
     }
+
     // ========================================
     // 🆕 매출 현황 API
     // ========================================
@@ -467,10 +472,6 @@ public class PublisherPortalController {
     /**
      * 내 매출 현황 조회
      * GET /api/v1/publishers/me/revenue
-     *
-     * @param period 기간 (today, week, month, year, custom)
-     * @param startDate 시작일 (custom 기간용)
-     * @param endDate 종료일 (custom 기간용)
      */
     @GetMapping("/me/revenue")
     public ResponseEntity<?> getMyRevenue(
@@ -478,10 +479,12 @@ public class PublisherPortalController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             Authentication authentication
+
     ) {
         try {
             User user = (User) authentication.getPrincipal();
             RevenueStatsResponse response = publisherService.getMyRevenue(user, period, startDate, endDate);
+
 
             Map<String, Object> result = new HashMap<>();
             result.put("code", 0);
@@ -498,6 +501,36 @@ public class PublisherPortalController {
             Map<String, Object> error = new HashMap<>();
             error.put("code", 1);
             error.put("msg", "매출 조회 실패: " + e.getMessage());
+            return ResponseEntity.status(500).body(error);
+        }
+    }
+
+    /**
+     * 🆕 내 매출 추이 조회 (차트용)
+     * GET /api/v1/publishers/me/revenue/trend
+     *
+     * @param period 기간 (today, week, month, year)
+     */
+    @GetMapping("/me/revenue/trend")
+    public ResponseEntity<?> getMyRevenueTrend(
+            @RequestParam(defaultValue = "month") String period,
+            Authentication authentication
+    ) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            RevenueTrendResponse response = publisherService.getRevenueTrend(user, period);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("code", 0);
+            result.put("msg", "조회 성공");
+            result.put("data", response);
+
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.error("매출 추이 조회 실패", e);
+            Map<String, Object> error = new HashMap<>();
+            error.put("code", 1);
+            error.put("msg", "매출 추이 조회 실패: " + e.getMessage());
             return ResponseEntity.status(500).body(error);
         }
     }
