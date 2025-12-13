@@ -1,8 +1,11 @@
 package com.switchmanga.api.repository;
 
 import com.switchmanga.api.entity.Review;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -31,7 +34,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     // 권별 평균 평점 계산
     @Query("SELECT AVG(r.rating) FROM Review r WHERE r.volume.id = :volumeId")
-    Double getAverageRatingByVolumeId(Long volumeId);
+    Double getAverageRatingByVolumeId(@Param("volumeId") Long volumeId);
 
     // 사용자가 특정 권에 리뷰를 작성했는지 확인
     boolean existsByUserIdAndVolumeId(Long userId, Long volumeId);
@@ -41,4 +44,46 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     // 좋아요 많은 순으로 리뷰 조회
     List<Review> findByVolumeIdOrderByLikeCountDesc(Long volumeId);
+
+    // ============ 신규 추가 메서드 (출판사 리뷰 관리용) ============
+
+    // 여러 Volume ID로 리뷰 조회 (페이징)
+    Page<Review> findByVolumeIdIn(List<Long> volumeIds, Pageable pageable);
+
+    // 여러 Volume ID로 리뷰 조회 (전체)
+    List<Review> findByVolumeIdIn(List<Long> volumeIds);
+
+    // 출판사별 리뷰 조회 (Volume → Series → Publisher)
+    @Query("SELECT r FROM Review r " +
+           "WHERE r.volume.series.publisher.id = :publisherId " +
+           "ORDER BY r.createdAt DESC")
+    Page<Review> findByPublisherId(@Param("publisherId") Long publisherId, Pageable pageable);
+
+    // 출판사별 리뷰 개수
+    @Query("SELECT COUNT(r) FROM Review r " +
+           "WHERE r.volume.series.publisher.id = :publisherId")
+    Long countByPublisherId(@Param("publisherId") Long publisherId);
+
+    // 출판사별 평균 평점
+    @Query("SELECT AVG(r.rating) FROM Review r " +
+           "WHERE r.volume.series.publisher.id = :publisherId")
+    Double getAverageRatingByPublisherId(@Param("publisherId") Long publisherId);
+
+    // 출판사별 + 시리즈별 리뷰 조회
+    @Query("SELECT r FROM Review r " +
+           "WHERE r.volume.series.publisher.id = :publisherId " +
+           "AND r.volume.series.id = :seriesId " +
+           "ORDER BY r.createdAt DESC")
+    Page<Review> findByPublisherIdAndSeriesId(
+            @Param("publisherId") Long publisherId,
+            @Param("seriesId") Long seriesId,
+            Pageable pageable);
+
+    // 좋아요 수 기준 베스트 리뷰 개수
+    @Query("SELECT COUNT(r) FROM Review r " +
+           "WHERE r.volume.series.publisher.id = :publisherId " +
+           "AND r.likeCount >= :minLikes")
+    Long countBestReviewsByPublisherId(
+            @Param("publisherId") Long publisherId,
+            @Param("minLikes") Integer minLikes);
 }

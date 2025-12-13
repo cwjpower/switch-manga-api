@@ -41,6 +41,22 @@ public class Review {
     @Column(name = "like_count")
     private Integer likeCount = 0;  // 좋아요 수
 
+    // ============ 신규 추가 필드 ============
+    
+    @Column(name = "is_hidden")
+    private Boolean isHidden = false;  // 숨김 여부
+
+    @Column(name = "hidden_reason", length = 100)
+    private String hiddenReason;  // 숨김 사유
+
+    @Column(name = "hidden_at")
+    private LocalDateTime hiddenAt;  // 숨김 처리 시간
+
+    @Column(name = "report_count")
+    private Integer reportCount = 0;  // 신고 횟수
+
+    // ============ 기존 필드 ============
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
