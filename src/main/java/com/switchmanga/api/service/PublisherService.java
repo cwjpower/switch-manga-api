@@ -9,6 +9,7 @@ import com.switchmanga.api.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,21 +18,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import com.switchmanga.api.dto.response.RevenueStatsResponse;
+import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.math.RoundingMode;
 import java.util.ArrayList;
-
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.switchmanga.api.dto.response.RevenueStatsResponse;
 
 
 @Service
@@ -377,12 +376,13 @@ public class PublisherService {
     // ========================================
 
     /**
-     * 내 주문 목록 조회
+     * 내 주문 목록 조회 (다중 키워드 검색 지원)
+     * 🆕 공백으로 구분된 여러 키워드를 OR 조건으로 검색
      */
     public Map<String, Object> getMyOrders(User user, int page, int size,
                                            String status, LocalDateTime startDate,
                                            LocalDateTime endDate, String sort,
-                                           String keyword) {  // ✅ keyword 추가
+                                           String keyword) {
         Publisher publisher = getPublisherByUser(user);
 
         Sort.Direction direction = "asc".equalsIgnoreCase(sort) ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -392,7 +392,41 @@ public class PublisherService {
 
         // ✅ 키워드 검색이 있으면 검색 쿼리 사용
         if (keyword != null && !keyword.trim().isEmpty()) {
-            orderPage = orderRepository.searchByPublisherId(publisher.getId(), keyword.trim(), pageable);
+            // 🆕 다중 키워드 지원: 공백으로 분리
+            String[] keywords = keyword.trim().split("\\s+");
+
+            if (keywords.length == 1) {
+                // 단일 키워드 - 기존 방식
+                orderPage = orderRepository.searchByPublisherId(publisher.getId(), keywords[0], pageable);
+            } else {
+                // 🆕 다중 키워드 - 각 키워드로 검색 후 합치기 (OR 검색)
+                Set<Order> allOrders = new LinkedHashSet<>();
+                for (String kw : keywords) {
+                    if (!kw.isEmpty()) {
+                        Page<Order> partialResult = orderRepository.searchByPublisherId(
+                                publisher.getId(), kw, PageRequest.of(0, 1000)
+                        );
+                        allOrders.addAll(partialResult.getContent());
+                    }
+                }
+
+                // 정렬
+                List<Order> sortedOrders = new ArrayList<>(allOrders);
+                if ("desc".equalsIgnoreCase(sort)) {
+                    sortedOrders.sort((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()));
+                } else {
+                    sortedOrders.sort((a, b) -> a.getCreatedAt().compareTo(b.getCreatedAt()));
+                }
+
+                // 수동 페이징
+                int start = page * size;
+                int end = Math.min(start + size, sortedOrders.size());
+                List<Order> pageContent = start < sortedOrders.size()
+                        ? sortedOrders.subList(start, end)
+                        : new ArrayList<>();
+
+                orderPage = new PageImpl<>(pageContent, pageable, sortedOrders.size());
+            }
         } else if (status != null && !status.isEmpty() && startDate != null && endDate != null) {
             orderPage = orderRepository.findByPublisherIdAndStatusAndDateRange(
                     publisher.getId(), status, startDate, endDate, pageable);
@@ -441,13 +475,13 @@ public class PublisherService {
     /**
      * 베스트셀러 조회
      */
-    public java.util.List<BestsellerResponse> getMyBestsellers(User user, int limit) {
+    public List<BestsellerResponse> getMyBestsellers(User user, int limit) {
         Publisher publisher = getPublisherByUser(user);
         Pageable pageable = PageRequest.of(0, limit);
 
-        java.util.List<Object[]> results = orderRepository.findBestsellersByPublisherId(publisher.getId(), pageable);
+        List<Object[]> results = orderRepository.findBestsellersByPublisherId(publisher.getId(), pageable);
 
-        java.util.List<BestsellerResponse> bestsellers = new ArrayList<>();
+        List<BestsellerResponse> bestsellers = new ArrayList<>();
         int rank = 1;
 
         for (Object[] row : results) {
@@ -657,8 +691,4 @@ public class PublisherService {
                 .topSeries(topSeries)
                 .build();
     }
-
-
-
-
 }
