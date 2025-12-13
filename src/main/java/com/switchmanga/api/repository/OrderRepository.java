@@ -400,5 +400,92 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate,
             Pageable pageable);
+
+
+    // ========================================
+    // 🆕 고객 분석 지표용 쿼리
+    // ========================================
+
+    /**
+     * 신규 구매자 수 (해당 기간 첫 구매)
+     */
+    @Query("SELECT COUNT(DISTINCT o.user.id) FROM Order o " +
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status IN ('PAID', 'COMPLETED') " +
+            "AND o.createdAt BETWEEN :startDate AND :endDate " +
+            "AND o.user.id NOT IN (" +
+            "  SELECT DISTINCT o2.user.id FROM Order o2 " +
+            "  JOIN o2.orderItems oi2 " +
+            "  JOIN oi2.volume v2 " +
+            "  JOIN v2.series s2 " +
+            "  WHERE s2.publisher.id = :publisherId " +
+            "  AND o2.status IN ('PAID', 'COMPLETED') " +
+            "  AND o2.createdAt < :startDate" +
+            ")")
+    Long countNewCustomersByPublisherIdAndDateRange(
+            @Param("publisherId") Long publisherId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
+
+    /**
+     * 기간 내 총 구매자 수
+     */
+    @Query("SELECT COUNT(DISTINCT o.user.id) FROM Order o " +
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status IN ('PAID', 'COMPLETED') " +
+            "AND o.createdAt BETWEEN :startDate AND :endDate")
+    Long countTotalCustomersByPublisherIdAndDateRange(
+            @Param("publisherId") Long publisherId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
+
+    /**
+     * 재구매 고객 수 (해당 기간 2회 이상 구매)
+     */
+    @Query(value = "SELECT COUNT(*) FROM (" +
+            "SELECT o.user_id FROM orders o " +
+            "JOIN order_items oi ON o.id = oi.order_id " +
+            "JOIN volumes v ON oi.volume_id = v.id " +
+            "JOIN series s ON v.series_id = s.id " +
+            "WHERE s.publisher_id = :publisherId " +
+            "AND o.status IN ('PAID', 'COMPLETED') " +
+            "AND o.created_at BETWEEN :startDate AND :endDate " +
+            "GROUP BY o.user_id " +
+            "HAVING COUNT(DISTINCT o.id) > 1) sub", nativeQuery = true)
+    Long countRepeatCustomersByPublisherIdAndDateRange(
+            @Param("publisherId") Long publisherId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
+
+    /**
+     * 출판사별 총 조회수 (볼륨 기준)
+     */
+    @Query("SELECT COALESCE(SUM(v.viewCount), 0) FROM Volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId")
+    Long sumViewCountByPublisherId(@Param("publisherId") Long publisherId);
+
+    /**
+     * 출판사별 기간 내 구매된 볼륨 수 (구매 전환 계산용)
+     */
+    @Query("SELECT COUNT(DISTINCT oi.volume.id) FROM Order o " +
+            "JOIN o.orderItems oi " +
+            "JOIN oi.volume v " +
+            "JOIN v.series s " +
+            "WHERE s.publisher.id = :publisherId " +
+            "AND o.status IN ('PAID', 'COMPLETED') " +
+            "AND o.createdAt BETWEEN :startDate AND :endDate")
+    Long countPurchasedVolumesByPublisherIdAndDateRange(
+            @Param("publisherId") Long publisherId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
+
+
 }
 

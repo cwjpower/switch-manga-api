@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.switchmanga.api.dto.response.RevenueStatsResponse;
-import com.switchmanga.api.dto.response.RevenueTrendResponse;  // ← 이거 추가!
+import com.switchmanga.api.dto.response.RevenueTrendResponse;
 
 
 @Service
@@ -206,15 +206,13 @@ public class PublisherService {
 
     /**
      * 볼륨 목록 조회
-     * ✅ Controller와 파라미터 순서 일치: user, page, size, seriesId, search, status, sort
      */
     public Map<String, Object> getMyVolumes(User user, int page, int size, Long seriesId,
                                             String search, String status, String sort) {
         Publisher publisher = getPublisherByUser(user);
 
-        // ✅ sort 파라미터에 따라 정렬 필드와 방향 결정
-        String sortField = "createdAt";  // 기본값
-        Sort.Direction direction = Sort.Direction.DESC;  // 기본값
+        String sortField = "createdAt";
+        Sort.Direction direction = Sort.Direction.DESC;
 
         if ("asc".equalsIgnoreCase(sort)) {
             direction = Sort.Direction.ASC;
@@ -378,7 +376,6 @@ public class PublisherService {
 
     /**
      * 내 주문 목록 조회 (다중 키워드 검색 지원)
-     * 🆕 공백으로 구분된 여러 키워드를 OR 조건으로 검색
      */
     public Map<String, Object> getMyOrders(User user, int page, int size,
                                            String status, LocalDateTime startDate,
@@ -391,16 +388,12 @@ public class PublisherService {
 
         Page<Order> orderPage;
 
-        // ✅ 키워드 검색이 있으면 검색 쿼리 사용
         if (keyword != null && !keyword.trim().isEmpty()) {
-            // 🆕 다중 키워드 지원: 공백으로 분리
             String[] keywords = keyword.trim().split("\\s+");
 
             if (keywords.length == 1) {
-                // 단일 키워드 - 기존 방식
                 orderPage = orderRepository.searchByPublisherId(publisher.getId(), keywords[0], pageable);
             } else {
-                // 🆕 다중 키워드 - 각 키워드로 검색 후 합치기 (OR 검색)
                 Set<Order> allOrders = new LinkedHashSet<>();
                 for (String kw : keywords) {
                     if (!kw.isEmpty()) {
@@ -411,7 +404,6 @@ public class PublisherService {
                     }
                 }
 
-                // 정렬
                 List<Order> sortedOrders = new ArrayList<>(allOrders);
                 if ("desc".equalsIgnoreCase(sort)) {
                     sortedOrders.sort((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()));
@@ -419,7 +411,6 @@ public class PublisherService {
                     sortedOrders.sort((a, b) -> a.getCreatedAt().compareTo(b.getCreatedAt()));
                 }
 
-                // 수동 페이징
                 int start = page * size;
                 int end = Math.min(start + size, sortedOrders.size());
                 List<Order> pageContent = start < sortedOrders.size()
@@ -490,7 +481,6 @@ public class PublisherService {
             Long salesCount = (Long) row[1];
             BigDecimal revenue = (BigDecimal) row[2];
 
-            // Volume 정보 조회
             Volume volume = volumeRepository.findById(volumeId).orElse(null);
             if (volume != null) {
                 bestsellers.add(BestsellerResponse.builder()
@@ -515,7 +505,6 @@ public class PublisherService {
     // ========================================
 
     private Publisher getPublisherByUser(User user) {
-        // ✅ 수정: publisherId로 직접 조회 (Lazy Loading 문제 해결)
         if (user.getPublisherId() == null) {
             throw new AccessDeniedException("출판사 계정이 아닙니다.");
         }
@@ -531,7 +520,8 @@ public class PublisherService {
             seriesRepository.save(series);
         }
     }
-// ========================================
+
+    // ========================================
     // 🆕 매출 추이 (Revenue Trend) - 차트용
     // ========================================
 
@@ -668,7 +658,6 @@ public class PublisherService {
                 }
                 periodStart = startDate.atStartOfDay();
                 periodEnd = endDate.atTime(23, 59, 59);
-                // custom은 비교 기간 없음
                 prevPeriodStart = null;
                 prevPeriodEnd = null;
                 break;
@@ -707,7 +696,7 @@ public class PublisherService {
             if (previousSales == null) previousSales = 0L;
         }
 
-        // 4. 계산
+        // 4. 기본 계산
         BigDecimal netRevenue = currentRevenue.multiply(BigDecimal.valueOf(0.7))
                 .setScale(0, RoundingMode.HALF_UP);
         BigDecimal platformFee = currentRevenue.multiply(BigDecimal.valueOf(0.3))
@@ -718,6 +707,30 @@ public class PublisherService {
 
         String revenueChangeRate = RevenueStatsResponse.calculateChangeRate(currentRevenue, previousRevenue);
         String salesChangeRate = RevenueStatsResponse.calculateChangeRate(currentSales, previousSales);
+
+        // 4-1. 🆕 새로운 지표 계산
+        Long newCustomers = orderRepository.countNewCustomersByPublisherIdAndDateRange(
+                publisherId, periodStart, periodEnd);
+        Long totalCustomers = orderRepository.countTotalCustomersByPublisherIdAndDateRange(
+                publisherId, periodStart, periodEnd);
+        Long repeatCustomers = orderRepository.countRepeatCustomersByPublisherIdAndDateRange(
+                publisherId, periodStart, periodEnd);
+        Long totalViewCount = orderRepository.sumViewCountByPublisherId(publisherId);
+
+        if (newCustomers == null) newCustomers = 0L;
+        if (totalCustomers == null) totalCustomers = 0L;
+        if (repeatCustomers == null) repeatCustomers = 0L;
+        if (totalViewCount == null) totalViewCount = 0L;
+
+        // 재구매율 계산 (재구매 고객 / 전체 고객 * 100)
+        Double repeatRate = totalCustomers > 0
+                ? (repeatCustomers * 100.0) / totalCustomers
+                : 0.0;
+
+        // 구매 전환율 계산 (판매 수 / 조회수 * 100)
+        Double conversionRate = totalViewCount > 0
+                ? (currentSales * 100.0) / totalViewCount
+                : 0.0;
 
         // 5. 시리즈별 매출 Top 10
         List<Object[]> seriesData = orderRepository.findSeriesRevenueByPublisherIdAndDateRange(
@@ -764,6 +777,12 @@ public class PublisherService {
                         .salesChangeRate(salesChangeRate)
                         .previousRevenue(previousRevenue)
                         .previousSales(previousSales)
+                        // 🆕 새로운 지표들
+                        .newCustomers(newCustomers)
+                        .totalCustomers(totalCustomers)
+                        .repeatRate(Math.round(repeatRate * 10.0) / 10.0)
+                        .conversionRate(Math.round(conversionRate * 100.0) / 100.0)
+                        .totalViewCount(totalViewCount)
                         .build())
                 .distribution(RevenueStatsResponse.RevenueDistribution.builder()
                         .totalRevenue(currentRevenue)

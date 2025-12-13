@@ -58,6 +58,13 @@ public class RevenueStatsResponse {
         // 전 기간 데이터 (비교용)
         private BigDecimal previousRevenue;
         private Long previousSales;
+
+        // 🆕 새로운 지표들
+        private Long newCustomers;            // 신규 구매자 수
+        private Long totalCustomers;          // 총 구매자 수
+        private Double repeatRate;            // 재구매율 (%)
+        private Double conversionRate;        // 구매 전환율 (%)
+        private Long totalViewCount;          // 총 조회수
     }
 
     @Data
