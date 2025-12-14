@@ -56,6 +56,15 @@ public class PublisherReviewService {
             String keyword,
             Pageable pageable) {
 
+        // ✅ 디버그 로그 추가
+        System.out.println("===== getPublisherReviews DEBUG =====");
+        System.out.println("publisherId: " + publisherId);
+        System.out.println("seriesId: " + seriesId);
+        System.out.println("volumeId: " + volumeId);
+        // ===== DEBUG =====
+        System.out.println("===== getPublisherReviews DEBUG =====");
+        System.out.println("publisherId: " + publisherId);
+
         // 1. 출판사의 볼륨 ID 목록 조회
         List<Long> volumeIds;
         
@@ -74,6 +83,15 @@ public class PublisherReviewService {
                     .stream()
                     .map(Volume::getId)
                     .collect(Collectors.toList());
+        }
+
+        // ✅ 디버그 로그 추가
+        System.out.println("volumeIds: " + volumeIds);
+        System.out.println("volumeIds.size(): " + volumeIds.size());
+
+        if (volumeIds.isEmpty()) {
+            System.out.println("⚠️ volumeIds is EMPTY! Returning empty page.");
+            return Page.empty(pageable);
         }
 
         if (volumeIds.isEmpty()) {
