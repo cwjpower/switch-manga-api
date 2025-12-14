@@ -101,6 +101,10 @@ public class PublisherReviewService {
         // 2. 리뷰 조회
         Page<Review> reviewPage = reviewRepository.findByVolumeIdIn(volumeIds, pageable);
 
+        // ===== DEBUG =====
+        System.out.println("reviewPage.getTotalElements(): " + reviewPage.getTotalElements());
+        System.out.println("reviewPage.getContent().size(): " + reviewPage.getContent().size());
+
         // 3. 답글 정보 조회 (N+1 방지)
         List<Long> reviewIds = reviewPage.getContent().stream()
                 .map(Review::getId)
